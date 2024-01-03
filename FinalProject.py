@@ -36,8 +36,16 @@ while True:
             mousePressed = True
         else:
             mousePressed = False
-
-    if not mousePressed:
-        menuwindow.blit(background_image, (0, 0))
-
+            
+        #Game States if statements
+        if gameState == "menu":
+            # Drawing the background for the menu window
+            menuwindow.blit(background_image, (0, 0))
+            
     pygame.display.flip()
+pygame.quit()
+    
+    
+    
+    
+    
