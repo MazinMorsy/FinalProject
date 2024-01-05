@@ -40,6 +40,9 @@ y_position_display3 = 60
 
 mouseX, mouseY = pygame.mouse.get_pos()
 
+#Intro Window dimensions and background
+Introwindow = pygame.display.set_mode((windowWidth, windowHeight))
+Introbackground_image = pygame.image.load("OpenGrass.jpg")
 
 #Menu Window dimensions and background
 menuwindow = pygame.display.set_mode((windowWidth, windowHeight))
@@ -54,6 +57,10 @@ sprite1 = pygame.image.load("Knight1.png")
 sprite1rect = sprite1.get_rect()  # Returns information about our sprite1
 sprite2 = pygame.image.load("Knight2.png")
 sprite2rect = sprite2.get_rect()  # Returns information about our sprite2
+sprite3 = pygame.image.load("Knight3.png")
+sprite3rect = sprite3.get_rect()  # Returns information about our sprite2
+
+
 
 # Choosing Characters Pictures
 sprite1Display = pygame.image.load("Knight1.png")
@@ -164,6 +171,18 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+            
+    elif gameState == "Brave Knight Playing":
+        if mousePressed == True:
+            # Drawing the background for the menu window
+            mainwindow.blit(mainbackground_image, (0, 0))
+            mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+            
+    elif gameState == "Dark Knight Playing":
+        if mousePressed == True:
+            # Drawing the background for the menu window
+            mainwindow.blit(mainbackground_image, (0, 0))
+            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit  
 
 
     # *********GAME LOGIC**********
@@ -195,7 +214,7 @@ while True:
 
     frame = frame + 1
     
-    # Running Animation logic
+    # Running Animation logic for Knight1
     if moving == True:
         if frame == 0:
             sprite1 = pygame.transform.scale(Running1Knight1, spriteCoords)
@@ -215,7 +234,7 @@ while True:
             sprite1 = pygame.transform.scale(Running8Knight1, spriteCoords)
             frame = 0
     else:
-        # Idle Animation
+        # Idle Animation for Knight1
         if frame == 0:
             sprite1 = pygame.transform.scale(Idle1Knight1, spriteCoords)
         elif frame == 10:
@@ -230,11 +249,21 @@ while True:
     if frame > 49:
         frame = 0
         
-    # Giving our game boundaries
+    # Giving our game boundaries for all our characters
     if sprite1rect.x <= 0:
         sprite1rect.x = 0
     elif sprite1rect.x >= windowWidth - 64:
         sprite1rect.x = windowWidth - 64
+        
+    if sprite2rect.x <= 0:
+        sprite2rect.x = 0
+    elif sprite2rect.x >= windowWidth - 64:
+        sprite2rect.x = windowWidth - 64
+        
+    if sprite3rect.x <= 0:
+        sprite3rect.x = 0
+    elif sprite3rect.x >= windowWidth - 64:
+        sprite3rect.x = windowWidth - 64
         
     # Display Animation for characters
     if moving == False:
