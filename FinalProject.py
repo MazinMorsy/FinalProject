@@ -9,7 +9,7 @@ windowHeight = 286
 
 frame = 0  # Not the FPS but the frame of our animation
 gravity = 0
-floor = 100
+floor = 160
 FPS = 60
 clock = pygame.time.Clock()  # Create a clock object
 
@@ -38,11 +38,17 @@ y_position_display2 = 57
 x_position_display3 = 320
 y_position_display3 = 60
 
-
-
-menuwindow = pygame.display.set_mode((windowWidth, windowHeight))
 mouseX, mouseY = pygame.mouse.get_pos()
-background_image = pygame.image.load("OpenGrass.jpg")
+
+
+#Menu Window dimensions and background
+menuwindow = pygame.display.set_mode((windowWidth, windowHeight))
+menubackground_image = pygame.image.load("OpenGrass.jpg")
+
+#Main Window dimensions and background
+mainwindow = pygame.display.set_mode((windowWidth, windowHeight))
+mainbackground_image = pygame.image.load("PlayingBackground.png")
+
 
 sprite1 = pygame.image.load("Knight1.png")
 sprite1rect = sprite1.get_rect()  # Returns information about our sprite1
@@ -89,38 +95,75 @@ Running6Knight1 = pygame.image.load("Running Animation6 Knight1.png")
 Running7Knight1 = pygame.image.load("Running Animation7 Knight1.png")
 Running8Knight1 = pygame.image.load("Running Animation8 Knight1.png")
 
+font_path1 = "DUNGEONFONT.ttf"
+font1 = pygame.font.Font(font_path1, 35)
+
+font_path2 = "TITLEFONT.otf"
+font2 = pygame.font.Font(font_path2, 40)
+
+#Background Music
+pygame.mixer.music.load("DungeonMusic.mp3")
+pygame.mixer.music.set_volume(1.0)
+pygame.mixer.music.play(-1) # The value -1 keeps it so it loops the bg music forever
+
 
 
 # *********GAME LOOP**********
 while True:
     # *********EVENTS**********
-    for event in pygame.event.get():  # Iterate over the list of events
+    for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            quit()
-        elif event.type == pygame.MOUSEBUTTONUP:
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouseX, mouseY = pygame.mouse.get_pos()  # Update mouse coordinates on button press
             mousePressed = True
-        else:
-            mousePressed = False
-
+            
     # Game States if statements
     if gameState == "menu":
         if mousePressed == True:
             # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
-            if mouseX > 400 and mouseX < 600 and mouseY > 100 and mouseY < 150:
-                gameState = "instructions"
+            if mouseX > 5 and mouseX < 155 and mouseY > 240 and mouseY < 290:
+                gameState = "Axe Warrior Playing"
                 print(gameState)
-            elif mouseX > 25 and mouseX < 225 and mouseY > 100 and mouseY < 150:
-                gameState = "play"
+            elif mouseX > 175 and mouseX < 325 and mouseY > 240 and mouseY < 290:
+                gameState = "Brave Knight Playing"
                 print(gameState)
+            elif mouseX > 345 and mouseX < 495 and mouseY > 240 and mouseY < 290:
+                gameState = "Dark Knight Playing"
+                print(gameState)
+
                 
         # Drawing the background for the menu window
-        menuwindow.blit(background_image, (0, 0))
+        menuwindow.blit(menubackground_image, (0, 0))
+        
+        pygame.draw.rect(menuwindow, pygame.Color("white"), (5, 240, 150, 50)) # The Box
+        instrText = font1.render("Axe Warrior", 1, "black")
+        menuwindow.blit(instrText, (15, 245)) # The Text
+        
+        pygame.draw.rect(menuwindow, pygame.Color("white"), (175, 240, 150, 50)) # The Box
+        instrText = font1.render("Brave Knight", 1, "black")
+        menuwindow.blit(instrText, (185, 245)) # The Text
+        
+        pygame.draw.rect(menuwindow, pygame.Color("white"), (345, 240, 150, 50)) # The Box
+        instrText = font1.render("Dark Knight", 1, "black")
+        menuwindow.blit(instrText, (355, 245)) # The Text
+        
+        menutitleText = font2.render("Choose Your Character", 1, "black")
+        menuwindow.blit(menutitleText, (40, 20))
+
+
         menuwindow.blit(sprite1Display, (x_position_display1, y_position_display1))  
         menuwindow.blit(sprite2Display, (x_position_display2, y_position_display2)) 
         menuwindow.blit(sprite3Display, (x_position_display3, y_position_display3))
         
-        menuwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+        mousePressed = False  # Reset the flag after processing the click
+
+        
+    elif gameState == "Axe Warrior Playing":
+        if mousePressed == True:
+            # Drawing the background for the menu window
+            mainwindow.blit(mainbackground_image, (0, 0))
+            mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
 
 
     # *********GAME LOGIC**********
