@@ -1,5 +1,6 @@
 import pygame
 from pygame import mixer
+import sys
 
 pygame.init()
 
@@ -9,22 +10,25 @@ windowHeight = 286
 
 frame = 0  # Not the FPS but the frame of our animation
 gravity = 0
-floor = 160
 FPS = 60
+gravity = 0
 clock = pygame.time.Clock()  # Create a clock object
 
 moving = False
 mousePressed = False
 sprite_speed = 3
-gameState = "menu"
+gameState = "IntroScreen"
 
 sprite1Display = pygame.image.load("Knight1.png")
 
 spritesrectwidth = 64
 spritesrectheight = 64
-sprite1rect = pygame.Rect(100, 220, spritesrectwidth, spritesrectheight)
-spriteCoords = (100, 100)
+sprite1rect = pygame.Rect(100, 185, spritesrectwidth, spritesrectheight)
+floor = 185
+spriteSize = (64, 64)
 sprite_speed = 3
+SpacePressed = False  # Initialize SpacePressed variable
+
 
 # Initial position of sprite1Display
 x_position_display1 = 0
@@ -38,11 +42,11 @@ y_position_display2 = 57
 x_position_display3 = 320
 y_position_display3 = 60
 
-mouseX, mouseY = pygame.mouse.get_pos()
+mouseX, mouseY = pygame.mouse.get_pos() # Getting the position of our mouse
 
 #Intro Window dimensions and background
 Introwindow = pygame.display.set_mode((windowWidth, windowHeight))
-Introbackground_image = pygame.image.load("OpenGrass.jpg")
+Introbackground_image = pygame.image.load("IntroBackground.jpg")
 
 #Menu Window dimensions and background
 menuwindow = pygame.display.set_mode((windowWidth, windowHeight))
@@ -59,7 +63,6 @@ sprite2 = pygame.image.load("Knight2.png")
 sprite2rect = sprite2.get_rect()  # Returns information about our sprite2
 sprite3 = pygame.image.load("Knight3.png")
 sprite3rect = sprite3.get_rect()  # Returns information about our sprite2
-
 
 
 # Choosing Characters Pictures
@@ -92,7 +95,7 @@ Idle4Knight3 = pygame.image.load("Idle Animation4 Knight3.png")
 Idle5Knight3 = pygame.image.load("Idle Animation5 Knight3.png")
 
 
-# Running Animations
+# Running Animations for our characters
 Running1Knight1 = pygame.image.load("Running Animation1 Knight1.png")
 Running2Knight1 = pygame.image.load("Running Animation2 Knight1.png")
 Running3Knight1 = pygame.image.load("Running Animation3 Knight1.png")
@@ -102,17 +105,82 @@ Running6Knight1 = pygame.image.load("Running Animation6 Knight1.png")
 Running7Knight1 = pygame.image.load("Running Animation7 Knight1.png")
 Running8Knight1 = pygame.image.load("Running Animation8 Knight1.png")
 
+
+# Slash Attack Animations for our characters
+Knight1SlashAnimation1 = pygame.image.load("Knight1SlashAnimation1.png")
+Knight1SlashAnimation2 = pygame.image.load("Knight1SlashAnimation2.png")
+Knight1SlashAnimation3 = pygame.image.load("Knight1SlashAnimation3.png")
+
+
+
+
+
 font_path1 = "DUNGEONFONT.ttf"
 font1 = pygame.font.Font(font_path1, 35)
 
 font_path2 = "TITLEFONT.otf"
 font2 = pygame.font.Font(font_path2, 40)
 
+font_path3 = "TITLEFONT.otf"
+font3 = pygame.font.Font(font_path2, 75)
+
+font_path4 = "DUNGEONFONT.ttf"
+font4 = pygame.font.Font(font_path1, 50)
+
 #Background Music
 pygame.mixer.music.load("DungeonMusic.mp3")
 pygame.mixer.music.set_volume(1.0)
 pygame.mixer.music.play(-1) # The value -1 keeps it so it loops the bg music forever
 
+
+# Projectile class
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        # Load projectile image
+        original_image = pygame.image.load("Slash.png") 
+        self.image =  pygame.transform.scale(original_image, (width, height))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 10  # Set the projectile speed
+
+    def update(self):
+        self.rect.x += self.speed
+        
+# FrogEnemy class
+class FrogEnemy(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+
+        self.running_images = [
+            pygame.image.load("FrogEnemyRun1.png"),
+            pygame.image.load("FrogEnemyRun2.png"),
+            pygame.image.load("FrogEnemyRun3.png"),
+            # Add more frames as needed
+        ]
+
+        self.index = 0
+        self.image = self.running_images[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 3  # Set the frog enemy speed
+
+    def update(self):
+        self.rect.x -= self.speed  # Move frog enemy towards the left
+
+        # Update frog enemy animation
+        self.index += 1
+        if self.index >= len(self.running_images):
+            self.index = 0
+        self.image = self.running_images[self.index]
+
+# Projectile group
+projectile_group = pygame.sprite.Group()
+
+# FrogEnemy group
+frog_enemy_group = pygame.sprite.Group()
 
 
 # *********GAME LOOP**********
@@ -121,11 +189,58 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
+            sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouseX, mouseY = pygame.mouse.get_pos()  # Update mouse coordinates on button press
-            mousePressed = True
+            mouseX, mouseY = pygame.mouse.get_pos()
+            if event.button == 1:  # Check for left mouse button
+                new_projectile = Projectile(sprite1rect.x + sprite1rect.width, sprite1rect.y + sprite1rect.height // 2, 20, 20)
+                projectile_group.add(new_projectile)
+                mousePressed = True  # Set the flag to True when the left mouse button is pressed
+
+                
+    # Check for collisions between projectiles and frog enemies
+    frog_enemy_hit_list = pygame.sprite.groupcollide(frog_enemy_group, projectile_group, True, True)
+    
+    # If frog enemy is hit by a projectile, remove the frog enemy
+    for frog_enemy_hit in frog_enemy_hit_list:
+        # Perform any actions you want when an enemy is hit, such as playing a sound, updating score, etc.
+        pass
             
-    # Game States if statements
+    # If frog enemy touches character, end the game
+    if frog_enemy_hit_list:
+        pygame.quit()
+        sys.exit()
+    
+    # Game States if statements            
+    if gameState == "IntroScreen":
+        if mousePressed == True:
+            # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
+            if mouseX > 180 and mouseX < 380 and mouseY > 220 and mouseY < 270:
+                gameState = "instructions"
+                print(gameState)   
+            elif mouseX > 180 and mouseX < 380 and mouseY > 150 and mouseY < 2000:
+                gameState = "menu"
+                print(gameState)
+                
+        # Drawing the background for the Intro window
+        Introwindow.blit(Introbackground_image, (0, 0))
+        # Drawing the instructions button with text
+        pygame.draw.rect(Introwindow, pygame.Color("Red"), (180, 220, 200, 50)) # The Box
+        instrText = font4.render("Instructions", 1, "black")
+        Introwindow.blit(instrText, (187, 220)) # The Text
+        # Drawing the play button with text
+        pygame.draw.rect(Introwindow, pygame.Color("firebrick"), (180, 150, 200, 50)) # The Box
+        playText = font4.render("Play", 1, "black")
+        Introwindow.blit(playText, (234, 145)) # The Text
+    
+        word1 = "Dungeon"
+        renderedText = font3.render(word1, 1, pygame.Color("red"))
+        Introwindow.blit(renderedText, (10,10))
+        word2 = "Survival"
+        renderedText = font3.render(word2, 1, pygame.Color("firebrick"))
+        Introwindow.blit(renderedText, (80,60))
+    
+    
     if gameState == "menu":
         if mousePressed == True:
             # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
@@ -162,8 +277,6 @@ while True:
         menuwindow.blit(sprite1Display, (x_position_display1, y_position_display1))  
         menuwindow.blit(sprite2Display, (x_position_display2, y_position_display2)) 
         menuwindow.blit(sprite3Display, (x_position_display3, y_position_display3))
-        
-        mousePressed = False  # Reset the flag after processing the click
 
         
     elif gameState == "Axe Warrior Playing":
@@ -171,6 +284,17 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+            # Update and draw projectiles
+            projectile_group.update()
+            projectile_group.draw(mainwindow)  # Draw projectiles on the game window
+            # Create frog enemy at the right edge of the screen
+            if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
+                new_frog_enemy = FrogEnemy(windowWidth, floor)
+                frog_enemy_group.add(new_frog_enemy)
+            # Update and draw frog enemies
+            frog_enemy_group.update()
+            frog_enemy_group.draw(mainwindow)
+
             
     elif gameState == "Brave Knight Playing":
         if mousePressed == True:
@@ -188,63 +312,62 @@ while True:
     # *********GAME LOGIC**********
     # Setting our keybinds to see if the specific key is pressed to subtract or add to the Sprites x and y coordinates
     # to move by sprite speed variable that we created
-    moving = False  # Reset moving flag
+    moving = True
     key = pygame.key.get_pressed()
-    if key[pygame.K_d]:
-        sprite1rect.x += sprite_speed
-        moving = True
-    elif key[pygame.K_a]:
-        sprite1rect.x -= sprite_speed
-        moving = True
-    elif key[pygame.K_SPACE]:
-        sprite1rect.y -= sprite_speed
+    if key[pygame.K_d] == True:
+        sprite1rect.x = sprite1rect.x + sprite_speed
+    elif key[pygame.K_a] == True:
+        sprite1rect.x = sprite1rect.x - sprite_speed
+    elif key[pygame.K_SPACE] == True:
+        sprite1rect.y = sprite1rect.y - sprite_speed
+        SpacePressed = True
     else:
-        sprite1rect.y += gravity
-
+        SpacePressed = False
+        moving = False
     # Causes our character to fall
-    gravity += 1
+    gravity = gravity + 1
+    sprite1rect.y = sprite1rect.y + gravity
     # Stops our sprite from falling when it hits the coordinates that we chose for the floor
     if sprite1rect.y > floor:
         gravity = 0
         sprite1rect.y = floor
     # Making our sprite jump
-    if key[pygame.K_SPACE] and sprite1rect.y == floor:
+    if SpacePressed == True and sprite1rect.y >= floor:
         gravity = -12
-
-
+        
     frame = frame + 1
     
     # Running Animation logic for Knight1
     if moving == True:
         if frame == 0:
-            sprite1 = pygame.transform.scale(Running1Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running1Knight1, (80,80))
         elif frame == 7:
-            sprite1 = pygame.transform.scale(Running2Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running2Knight1, (80,80))
         elif frame == 14:
-            sprite1 = pygame.transform.scale(Running3Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running3Knight1, (80,80))
         elif frame == 21:
-            sprite1 = pygame.transform.scale(Running4Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running4Knight1, (80,80))
         elif frame == 28:
-            sprite1 = pygame.transform.scale(Running5Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running5Knight1, (80,80))
         elif frame == 35:
-            sprite1 = pygame.transform.scale(Running6Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running6Knight1, (80,80))
         elif frame == 42:
-            sprite1 = pygame.transform.scale(Running7Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running7Knight1, (80,80))
         elif frame == 49:
-            sprite1 = pygame.transform.scale(Running8Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Running8Knight1, (80,80))
             frame = 0
     else:
         # Idle Animation for Knight1
         if frame == 0:
-            sprite1 = pygame.transform.scale(Idle1Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Idle1Knight1, spriteSize)
         elif frame == 10:
-            sprite1 = pygame.transform.scale(Idle2Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Idle2Knight1, spriteSize)
         elif frame == 20:
-            sprite1 = pygame.transform.scale(Idle3Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Idle3Knight1, spriteSize)
         elif frame == 30:
-            sprite1 = pygame.transform.scale(Idle4Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Idle4Knight1, spriteSize)
         elif frame == 40:
-            sprite1 = pygame.transform.scale(Idle5Knight1, spriteCoords)
+            sprite1 = pygame.transform.scale(Idle5Knight1, spriteSize)
             frame = 0
     if frame > 49:
         frame = 0
@@ -310,8 +433,8 @@ while True:
             frame = 0
     if frame > 40:
         frame = 0
-
         
+
     # *********DRAW THE FRAME**********
     pygame.display.flip()
     clock.tick(FPS)  # Force frame rate to 60fps or lower
