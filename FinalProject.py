@@ -65,6 +65,12 @@ sprite2rect = sprite2.get_rect()  # Returns information about our sprite2
 sprite3 = pygame.image.load("Knight3.png")
 sprite3rect = sprite3.get_rect()  # Returns information about our sprite2
 
+FrogEnemy = pygame.image.load("FrogEnemyRun1.png")
+FrogEnemyrect = FrogEnemy.get_rect() # Returns information about our FrogEnemy
+
+Heart1 = pygame.image.load("Heart1.png")
+Heart2 = pygame.image.load("Heart2.png")
+Heart3 = pygame.image.load("Heart3.png")
 
 # Choosing Characters Pictures
 sprite1Display = pygame.image.load("Knight1.png")
@@ -288,6 +294,9 @@ while True:
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
+            mainwindow.blit(Heart1, (400,0))
+            mainwindow.blit(Heart2, (425,0))
+            mainwindow.blit(Heart3, (450,0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
             # Update and draw projectiles
             projectile_group.update()
@@ -305,6 +314,9 @@ while True:
             timer_font = pygame.font.Font(None, 36)
             timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
             mainwindow.blit(timer_text, (10, 10))
+            
+            if sprite1rect.colliderect(FrogEnemyrect):
+                pygame.quit()
 
 
             
