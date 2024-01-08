@@ -12,6 +12,7 @@ frame = 0  # Not the FPS but the frame of our animation
 gravity = 0
 FPS = 60
 gravity = 0
+current_time = 0  # Initialize the timer variable
 clock = pygame.time.Clock()  # Create a clock object
 
 moving = False
@@ -196,6 +197,10 @@ while True:
                 new_projectile = Projectile(sprite1rect.x + sprite1rect.width, sprite1rect.y + sprite1rect.height // 2, 20, 20)
                 projectile_group.add(new_projectile)
                 mousePressed = True  # Set the flag to True when the left mouse button is pressed
+                
+    # Update the timer
+    current_time += clock.get_rawtime() / 1000
+
 
                 
     # Check for collisions between projectiles and frog enemies
@@ -291,9 +296,16 @@ while True:
             if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
                 new_frog_enemy = FrogEnemy(windowWidth, floor)
                 frog_enemy_group.add(new_frog_enemy)
+                
             # Update and draw frog enemies
             frog_enemy_group.update()
             frog_enemy_group.draw(mainwindow)
+            
+            # Draw the timer
+            timer_font = pygame.font.Font(None, 36)
+            timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
+            mainwindow.blit(timer_text, (10, 10))
+
 
             
     elif gameState == "Brave Knight Playing":
