@@ -29,6 +29,8 @@ floor = 185
 spriteSize = (64, 64)
 sprite_speed = 3
 SpacePressed = False  # Initialize SpacePressed variable
+MonsterRoar = pygame.mixer.Sound("TitanROAR.wav")
+MonsterRoarPlayed = False
 
 
 # Initial position of sprite1Display
@@ -56,6 +58,10 @@ menubackground_image = pygame.image.load("OpenGrass.jpg")
 #Main Window dimensions and background
 mainwindow = pygame.display.set_mode((windowWidth, windowHeight))
 mainbackground_image = pygame.image.load("PlayingBackground.png")
+
+#Game Intro Window dimensions and background
+GameIntrowindow = pygame.display.set_mode((windowWidth, windowHeight))
+GameIntroScreenbg = pygame.image.load("GameIntroScreen.png")
 
 
 sprite1 = pygame.image.load("Knight1.png")
@@ -138,6 +144,8 @@ font4 = pygame.font.Font(font_path1, 50)
 pygame.mixer.music.load("DungeonMusic.mp3")
 pygame.mixer.music.set_volume(1.0)
 pygame.mixer.music.play(-1) # The value -1 keeps it so it loops the bg music forever
+
+
 
 
 # Projectile class
@@ -252,7 +260,7 @@ while True:
         Introwindow.blit(renderedText, (80,60))
     
     
-    if gameState == "menu":
+    elif gameState == "menu":
         if mousePressed == True:
             # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
             if mouseX > 5 and mouseX < 155 and mouseY > 240 and mouseY < 290:
@@ -289,15 +297,21 @@ while True:
         menuwindow.blit(sprite2Display, (x_position_display2, y_position_display2)) 
         menuwindow.blit(sprite3Display, (x_position_display3, y_position_display3))
 
-        
     elif gameState == "Axe Warrior Playing":
         if mousePressed == True:
+            
             # Drawing the background for the menu window
+            mainwindow.blit(GameIntroScreenbg, (0, 0))
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(Heart1, (400,0))
             mainwindow.blit(Heart2, (425,0))
             mainwindow.blit(Heart3, (450,0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+            # Play the game over sound effect only once
+            if not MonsterRoarPlayed:
+                MonsterRoar.play()
+                MonsterRoarPlayed = True
+            
             # Update and draw projectiles
             projectile_group.update()
             projectile_group.draw(mainwindow)  # Draw projectiles on the game window
