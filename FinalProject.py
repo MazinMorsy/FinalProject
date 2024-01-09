@@ -1,6 +1,5 @@
 import pygame
 from pygame import mixer
-import sys
 
 pygame.init()
 
@@ -78,6 +77,8 @@ Heart1 = pygame.image.load("Heart1.png")
 Heart2 = pygame.image.load("Heart2.png")
 Heart3 = pygame.image.load("Heart3.png")
 
+King = pygame.image.load("King.png")
+
 # Choosing Characters Pictures
 sprite1Display = pygame.image.load("Knight1.png")
 sprite1Displayrect = sprite1Display.get_rect()  # Returns information about our sprite1
@@ -117,6 +118,25 @@ Running5Knight1 = pygame.image.load("Running Animation5 Knight1.png")
 Running6Knight1 = pygame.image.load("Running Animation6 Knight1.png")
 Running7Knight1 = pygame.image.load("Running Animation7 Knight1.png")
 Running8Knight1 = pygame.image.load("Running Animation8 Knight1.png")
+
+Running1Knight2 = pygame.image.load("Knight2RunningAnimation1.png")
+Running2Knight2 = pygame.image.load("Knight2RunningAnimation2.png")
+Running3Knight2 = pygame.image.load("Knight2RunningAnimation3.png")
+Running4Knight2 = pygame.image.load("Knight2RunningAnimation4.png")
+Running5Knight2 = pygame.image.load("Knight2RunningAnimation5.png")
+Running6Knight2 = pygame.image.load("Knight2RunningAnimation6.png")
+Running7Knight2 = pygame.image.load("Knight2RunningAnimation7.png")
+Running8Knight2 = pygame.image.load("Knight2RunningAnimation8.png")
+
+Running1Knight3 = pygame.image.load("RunningAnimation1Knight3.png")
+Running2Knight3 = pygame.image.load("RunningAnimation2Knight3.png")
+Running3Knight3 = pygame.image.load("RunningAnimation3Knight3.png")
+Running4Knight3 = pygame.image.load("RunningAnimation4Knight3.png")
+Running5Knight3 = pygame.image.load("RunningAnimation5Knight3.png")
+Running6Knight3 = pygame.image.load("RunningAnimation6Knight3.png")
+Running7Knight3 = pygame.image.load("RunningAnimation7Knight3.png")
+Running8Knight3 = pygame.image.load("RunningAnimation8Knight3.png")
+
 
 
 # Slash Attack Animations for our characters
@@ -204,7 +224,6 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouseX, mouseY = pygame.mouse.get_pos()
             if event.button == 1:  # Check for left mouse button
@@ -228,7 +247,6 @@ while True:
     # If frog enemy touches character, end the game
     if frog_enemy_hit_list:
         pygame.quit()
-        sys.exit()
     
     # Game States if statements            
     if gameState == "IntroScreen":
@@ -301,8 +319,9 @@ while True:
         if mousePressed == True:
             
             # Drawing the background for the menu window
-            mainwindow.blit(GameIntroScreenbg, (0, 0))
             mainwindow.blit(mainbackground_image, (0, 0))
+            mainwindow.blit(King, (0,0))
+            mainwindow.blit(GameIntroScreenbg, (0, 0))
             mainwindow.blit(Heart1, (400,0))
             mainwindow.blit(Heart2, (425,0))
             mainwindow.blit(Heart3, (450,0))
@@ -348,7 +367,7 @@ while True:
 
 
     # *********GAME LOGIC**********
-    # Setting our keybinds to see if the specific key is pressed to subtract or add to the Sprites x and y coordinates
+    # Setting our keybinds to see if a specific key is pressed to subtract or add to the Sprites x and y coordinates
     # to move by sprite speed variable that we created
     moving = True
     key = pygame.key.get_pressed()
@@ -372,10 +391,58 @@ while True:
     # Making our sprite jump
     if SpacePressed == True and sprite1rect.y >= floor:
         gravity = -12
+        continue
         
-    frame = frame + 1
-    
+    moving = True
+    key = pygame.key.get_pressed()
+    if key[pygame.K_d] == True:
+        sprite2rect.x = sprite2rect.x + sprite_speed
+    elif key[pygame.K_a] == True:
+        sprite2rect.x = sprite2rect.x - sprite_speed
+    elif key[pygame.K_SPACE] == True:
+        sprite2rect.y = sprite2rect.y - sprite_speed
+        SpacePressed = True
+    else:
+        SpacePressed = False
+        moving = False
+    # Causes our character to fall
+    gravity = gravity + 1
+    sprite2rect.y = sprite2rect.y + gravity
+    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+    if sprite2rect.y > floor:
+        gravity = 0
+        sprite2rect.y = floor
+    # Making our sprite jump
+    if SpacePressed == True and sprite2rect.y >= floor:
+        gravity = -12
+        continue
+        
+    moving = True
+    key = pygame.key.get_pressed()
+    if key[pygame.K_d] == True:
+        sprite3rect.x = sprite3rect.x + sprite_speed
+    elif key[pygame.K_a] == True:
+        sprite3rect.x = sprite3rect.x - sprite_speed
+    elif key[pygame.K_SPACE] == True:
+        sprite3rect.y = sprite3rect.y - sprite_speed
+        SpacePressed = True
+    else:
+        SpacePressed = False
+        moving = False
+    # Causes our character to fall
+    gravity = gravity + 1
+    sprite3rect.y = sprite3rect.y + gravity
+    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+    if sprite3rect.y > floor:
+        gravity = 0
+        sprite3rect.y = floor
+    # Making our sprite jump
+    if SpacePressed == True and sprite3rect.y >= floor:
+        gravity = -12
+        continue
+        
     # Running Animation logic for Knight1
+    frame = frame + 1
     if moving == True:
         if frame == 0:
             sprite1 = pygame.transform.scale(Running1Knight1, (80,80))
@@ -406,6 +473,75 @@ while True:
             sprite1 = pygame.transform.scale(Idle4Knight1, spriteSize)
         elif frame == 40:
             sprite1 = pygame.transform.scale(Idle5Knight1, spriteSize)
+            frame = 0
+    if frame > 49:
+        frame = 0
+        
+        # Running Animation logic for Knight2
+    if moving == True:
+        if frame == 0:
+            sprite2 = pygame.transform.scale(Running1Knight2, spriteSize)
+        elif frame == 7:
+            sprite2 = pygame.transform.scale(Running2Knight2, spriteSize)
+        elif frame == 14:
+            sprite2 = pygame.transform.scale(Running3Knight2, spriteSize)
+        elif frame == 21:
+            sprite2 = pygame.transform.scale(Running4Knight2, spriteSize)
+        elif frame == 28:
+            sprite2 = pygame.transform.scale(Running5Knight2, spriteSize)
+        elif frame == 35:
+            sprite2 = pygame.transform.scale(Running6Knight2, spriteSize)
+        elif frame == 42:
+            sprite2 = pygame.transform.scale(Running7Knight2, spriteSize)
+        elif frame == 49:
+            sprite2 = pygame.transform.scale(Running8Knight2, spriteSize)
+            frame = 0
+    else:
+        # Idle Animation for Knight2
+        if frame == 0:
+            sprite2 = pygame.transform.scale(Idle1Knight2, spriteSize)
+        elif frame == 10:
+            sprite2 = pygame.transform.scale(Idle2Knight2, spriteSize)
+        elif frame == 20:
+            sprite2 = pygame.transform.scale(Idle3Knight2, spriteSize)
+        elif frame == 30:
+            sprite2 = pygame.transform.scale(Idle4Knight2, spriteSize)
+        elif frame == 40:
+            sprite2 = pygame.transform.scale(Idle5Knight2, spriteSize)
+            frame = 0
+    if frame > 49:
+        frame = 0
+            # Running Animation logic for Knight3
+    if moving == True:
+        if frame == 0:
+            sprite3 = pygame.transform.scale(Running1Knight3, spriteSize)
+        elif frame == 7:
+            sprite3 = pygame.transform.scale(Running2Knight3, spriteSize)
+        elif frame == 14:
+            sprite3 = pygame.transform.scale(Running3Knight3, spriteSize)
+        elif frame == 21:
+            sprite3 = pygame.transform.scale(Running4Knight3, spriteSize)
+        elif frame == 28:
+            sprite3 = pygame.transform.scale(Running5Knight3, spriteSize)
+        elif frame == 35:
+            sprite3 = pygame.transform.scale(Running6Knight3, spriteSize)
+        elif frame == 42:
+            sprite3 = pygame.transform.scale(Running7Knight3, spriteSize)
+        elif frame == 49:
+            sprite3 = pygame.transform.scale(Running8Knight3, spriteSize)
+            frame = 0
+    else:
+        # Idle Animation for Knight3
+        if frame == 0:
+            sprite3 = pygame.transform.scale(Idle1Knight3, spriteSize)
+        elif frame == 10:
+            sprite3 = pygame.transform.scale(Idle2Knight3, spriteSize)
+        elif frame == 20:
+            sprite3 = pygame.transform.scale(Idle3Knight3, spriteSize)
+        elif frame == 30:
+            sprite3 = pygame.transform.scale(Idle4Knight3, spriteSize)
+        elif frame == 40:
+            sprite3 = pygame.transform.scale(Idle5Knight3, spriteSize)
             frame = 0
     if frame > 49:
         frame = 0
@@ -471,7 +607,6 @@ while True:
             frame = 0
     if frame > 40:
         frame = 0
-        
 
     # *********DRAW THE FRAME**********
     pygame.display.flip()
