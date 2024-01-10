@@ -244,10 +244,7 @@ while True:
         # Perform any actions you want when an enemy is hit, such as playing a sound, updating score, etc.
         pass
             
-    # If frog enemy touches character, end the game
-    if frog_enemy_hit_list:
-        pygame.quit()
-    
+
     # Game States if statements            
     if gameState == "IntroScreen":
         if mousePressed == True:
@@ -255,7 +252,7 @@ while True:
             if mouseX > 180 and mouseX < 380 and mouseY > 220 and mouseY < 270:
                 gameState = "instructions"
                 print(gameState)   
-            elif mouseX > 180 and mouseX < 380 and mouseY > 150 and mouseY < 2000:
+            elif mouseX > 180 and mouseX < 380 and mouseY > 150 and mouseY < 195:
                 gameState = "menu"
                 print(gameState)
                 
@@ -363,8 +360,32 @@ while True:
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
-            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit  
+            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+            
+    elif gameState == "Game Over You Lost":
+        # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
+        if mouseX > 180 and mouseX < 380 and mouseY > 200 and mouseY < 200:
+            gameState = "menu"
+            print(gameState)
+        elif mouseX > 180 and mouseX < 325 and mouseY > 200 and mouseY < 270:
+            pygame.quit()
 
+        Introwindow.fill((255,0,0))
+            
+        pygame.draw.rect(Introwindow, pygame.Color("White"), (180, 150, 200, 50)) # The Box
+        instrText = font4.render("Play Again", 1, "black")
+        Introwindow.blit(instrText, (200, 145 )) # The Text
+        # Drawing the play button with text
+        pygame.draw.rect(Introwindow, pygame.Color("White"), (180, 220, 200, 50)) # The Box
+        playText = font4.render("Quit", 1, "black")
+        Introwindow.blit(playText, (243, 220)) # The Text
+            
+        word3 = "Game"
+        renderedText = font3.render(word3, 1, pygame.Color("Black"))
+        Introwindow.blit(renderedText, (60,50))
+        word4 = "Over"
+        renderedText = font3.render(word4, 1, pygame.Color("Black"))
+        Introwindow.blit(renderedText, (300,50))
 
     # *********GAME LOGIC**********
     # Setting our keybinds to see if a specific key is pressed to subtract or add to the Sprites x and y coordinates
