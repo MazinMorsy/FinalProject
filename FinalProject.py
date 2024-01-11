@@ -21,16 +21,20 @@ gameState = "IntroScreen"
 
 sprite1Display = pygame.image.load("Knight1.png")
 
-spritesrectwidth = 64
-spritesrectheight = 64
-sprite1rect = pygame.Rect(100, 185, spritesrectwidth, spritesrectheight)
+spritesRectwidth = 64
+spritesRectheight = 64
+sprite1rect = pygame.Rect(100, 185, spritesRectwidth, spritesRectheight)
 floor = 185
+floor2 = 200
 spriteSize = (64, 64)
 sprite_speed = 3
 SpacePressed = False  # Initialize SpacePressed variable
 MonsterRoar = pygame.mixer.Sound("TitanROAR.wav")
 MonsterRoarPlayed = False
 
+doorsrectwidth = 64
+doorsrectheight = 64
+Doorrect = pygame.Rect(485,110, doorsrectwidth,doorsrectheight )
 
 # Initial position of sprite1Display
 x_position_display1 = 0
@@ -70,12 +74,16 @@ sprite2rect = sprite2.get_rect()  # Returns information about our sprite2
 sprite3 = pygame.image.load("Knight3.png")
 sprite3rect = sprite3.get_rect()  # Returns information about our sprite2
 
+
 FrogEnemy = pygame.image.load("FrogEnemyRun1.png")
 FrogEnemyrect = FrogEnemy.get_rect() # Returns information about our FrogEnemy
 
 Heart1 = pygame.image.load("Heart1.png")
 Heart2 = pygame.image.load("Heart2.png")
 Heart3 = pygame.image.load("Heart3.png")
+
+Door = pygame.image.load("Door.png")
+Doorrect = Door.get_rect()
 
 King = pygame.image.load("King.png")
 
@@ -279,7 +287,7 @@ while True:
         if mousePressed == True:
             # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
             if mouseX > 5 and mouseX < 155 and mouseY > 240 and mouseY < 290:
-                gameState = "Axe Warrior Playing"
+                gameState = "Axe Warrior Play GIS"
                 print(gameState)
             elif mouseX > 175 and mouseX < 325 and mouseY > 240 and mouseY < 290:
                 gameState = "Brave Knight Playing"
@@ -312,17 +320,18 @@ while True:
         menuwindow.blit(sprite2Display, (x_position_display2, y_position_display2)) 
         menuwindow.blit(sprite3Display, (x_position_display3, y_position_display3))
 
-    elif gameState == "Axe Warrior Playing":
+    elif gameState == "Axe Warrior Play GIS":
         if mousePressed == True:
             
             # Drawing the background for the menu window
-            mainwindow.blit(mainbackground_image, (0, 0))
-            mainwindow.blit(King, (0,0))
             mainwindow.blit(GameIntroScreenbg, (0, 0))
+            mainwindow.blit(Door, (485,110))
+            mainwindow.blit(King, (100,100))
             mainwindow.blit(Heart1, (400,0))
             mainwindow.blit(Heart2, (425,0))
             mainwindow.blit(Heart3, (450,0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+            
             # Play the game over sound effect only once
             if not MonsterRoarPlayed:
                 MonsterRoar.play()
@@ -345,8 +354,15 @@ while True:
             timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
             mainwindow.blit(timer_text, (10, 10))
             
+            if sprite1rect.colliderect(Doorrect):
+                gameState = "Axe Warrior Playing"
+            
             if sprite1rect.colliderect(FrogEnemyrect):
                 pygame.quit()
+                
+    elif gameState == "Axe Warrior Playing":
+        if mousePressed == True:
+            mainwindow.blit(mainbackground_image,(0,0))
 
 
             
@@ -568,20 +584,20 @@ while True:
         frame = 0
         
     # Giving our game boundaries for all our characters
-    if sprite1rect.x <= 0:
-        sprite1rect.x = 0
-    elif sprite1rect.x >= windowWidth - 64:
-        sprite1rect.x = windowWidth - 64
+    if sprite1rect.x <= -20:
+        sprite1rect.x = -20
+    elif sprite1rect.x >= windowWidth - 50:
+        sprite1rect.x = windowWidth - 50
         
-    if sprite2rect.x <= 0:
-        sprite2rect.x = 0
-    elif sprite2rect.x >= windowWidth - 64:
-        sprite2rect.x = windowWidth - 64
+    if sprite2rect.x <= -20:
+        sprite2rect.x = -20
+    elif sprite2rect.x >= windowWidth - 40:
+        sprite2rect.x = windowWidth - 40
         
-    if sprite3rect.x <= 0:
-        sprite3rect.x = 0
-    elif sprite3rect.x >= windowWidth - 64:
-        sprite3rect.x = windowWidth - 64
+    if sprite3rect.x <= -20:
+        sprite3rect.x = -20
+    elif sprite3rect.x >= windowWidth - 45:
+        sprite3rect.x = windowWidth - 45
         
     # Display Animation for characters
     if moving == False:
