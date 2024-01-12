@@ -25,7 +25,7 @@ spritesRectwidth = 64
 spritesRectheight = 64
 sprite1rect = pygame.Rect(100, 185, spritesRectwidth, spritesRectheight)
 floor = 185
-floor2 = 200
+floor2 = 250
 spriteSize = (64, 64)
 sprite_speed = 3
 SpacePressed = False  # Initialize SpacePressed variable
@@ -319,7 +319,31 @@ while True:
         menuwindow.blit(sprite1Display, (x_position_display1, y_position_display1))  
         menuwindow.blit(sprite2Display, (x_position_display2, y_position_display2)) 
         menuwindow.blit(sprite3Display, (x_position_display3, y_position_display3))
-
+        
+    elif gameState == "instructions":
+        if mousePressed == True:
+            mainwindow.fill((255,255,255))
+            # Drawing our title
+            titleText = font3.render("Instructions", 1, "black")
+            mainwindow.blit(titleText, (40, 10))
+            
+            # Drawing each line of instructions
+            line1 = font1.render("1. Use 'A' and 'D' keys to move left and right.", 1, pygame.Color("black"))
+            mainwindow.blit(line1, (10, 70))
+            line2 = font1.render("2. Press 'SPACE' to jump.", 1, pygame.Color("black"))
+            mainwindow.blit(line2, (10, 110))
+            line3 = font1.render("3. Press 'r' to shoot projectiles. ", 1, pygame.Color("black"))
+            mainwindow.blit(line3, (10, 150))
+            line4 = font1.render("4. Retrieve The magical gem to save the kingdom.).", 1, pygame.Color("black"))
+            mainwindow.blit(line4, (10, 190))
+            line5 = font1.render("Good Luck!", 1, pygame.Color("black"))
+            mainwindow.blit(line5, (10, 230))
+        
+            # Drawing the menu button
+            pygame.draw.rect(mainwindow, pygame.Color("white"), (490, 120, 100, 50)) # The Box
+            menuText = font1.render("Menu", 1, "black")
+            mainwindow.blit(menuText, (507, 128)) # The Text
+            
     elif gameState == "Axe Warrior Play GIS":
         if mousePressed == True:
             
@@ -337,34 +361,81 @@ while True:
                 MonsterRoar.play()
                 MonsterRoarPlayed = True
             
-            # Update and draw projectiles
-            projectile_group.update()
-            projectile_group.draw(mainwindow)  # Draw projectiles on the game window
-            # Create frog enemy at the right edge of the screen
-            if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
-                new_frog_enemy = FrogEnemy(windowWidth, floor)
-                frog_enemy_group.add(new_frog_enemy)
-                
-            # Update and draw frog enemies
-            frog_enemy_group.update()
-            frog_enemy_group.draw(mainwindow)
-            
-            # Draw the timer
-            timer_font = pygame.font.Font(None, 36)
-            timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
-            mainwindow.blit(timer_text, (10, 10))
-            
+            if gameState == "Axe Warrior Play GIS":
+                moving = True
+                key = pygame.key.get_pressed()
+                if key[pygame.K_d] == True:
+                    sprite1rect.x = sprite1rect.x + sprite_speed
+                elif key[pygame.K_a] == True:
+                    sprite1rect.x = sprite1rect.x - sprite_speed
+                elif key[pygame.K_SPACE] == True:
+                    sprite1rect.y = sprite1rect.y - sprite_speed
+                    SpacePressed = True
+                else:
+                    SpacePressed = False
+                    moving = False
+                # Causes our character to fall
+                gravity = gravity + 1
+                sprite1rect.y = sprite1rect.y + gravity
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor2
+                if sprite1rect.y > floor2:
+                    gravity = 0
+                    sprite1rect.y = floor2
+                # Making our sprite jump
+                if SpacePressed == True and sprite1rect.y >= floor2:
+                    gravity = -12
+                    continue
+
             if sprite1rect.colliderect(Doorrect):
                 gameState = "Axe Warrior Playing"
-            
-            if sprite1rect.colliderect(FrogEnemyrect):
-                pygame.quit()
                 
     elif gameState == "Axe Warrior Playing":
         if mousePressed == True:
             mainwindow.blit(mainbackground_image,(0,0))
-
-
+        moving = True
+        key = pygame.key.get_pressed()
+        if key[pygame.K_d] == True:
+            sprite1rect.x = sprite1rect.x + sprite_speed
+        elif key[pygame.K_a] == True:
+            sprite1rect.x = sprite1rect.x - sprite_speed
+        elif key[pygame.K_SPACE] == True:
+            sprite1rect.y = sprite1rect.y - sprite_speed
+            SpacePressed = True
+        else:
+            SpacePressed = False
+            moving = False
+        # Causes our character to fall
+        gravity = gravity + 1
+        sprite1rect.y = sprite1rect.y + gravity
+        # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+        if sprite1rect.y > floor:
+            gravity = 0
+            sprite1rect.y = floor
+        # Making our sprite jump
+        if SpacePressed == True and sprite1rect.y >= floor:
+            gravity = -12
+        
+        # Update and draw projectiles
+        projectile_group.update()
+        projectile_group.draw(mainwindow)  # Draw projectiles on the game window
+        # Create frog enemy at the right edge of the screen
+        if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
+            new_frog_enemy = FrogEnemy(windowWidth, floor)
+            frog_enemy_group.add(new_frog_enemy)
+                
+        # Update and draw frog enemies
+        frog_enemy_group.update()
+        frog_enemy_group.draw(mainwindow)
+            
+        # Draw the timer
+        timer_font = pygame.font.Font(None, 36)
+        timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
+        mainwindow.blit(timer_text, (10, 10))
+            
+            
+        if sprite1rect.colliderect(FrogEnemyrect):
+            pygame.quit()
+            continue
             
     elif gameState == "Brave Knight Playing":
         if mousePressed == True:
@@ -406,29 +477,7 @@ while True:
     # *********GAME LOGIC**********
     # Setting our keybinds to see if a specific key is pressed to subtract or add to the Sprites x and y coordinates
     # to move by sprite speed variable that we created
-    moving = True
-    key = pygame.key.get_pressed()
-    if key[pygame.K_d] == True:
-        sprite1rect.x = sprite1rect.x + sprite_speed
-    elif key[pygame.K_a] == True:
-        sprite1rect.x = sprite1rect.x - sprite_speed
-    elif key[pygame.K_SPACE] == True:
-        sprite1rect.y = sprite1rect.y - sprite_speed
-        SpacePressed = True
-    else:
-        SpacePressed = False
-        moving = False
-    # Causes our character to fall
-    gravity = gravity + 1
-    sprite1rect.y = sprite1rect.y + gravity
-    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-    if sprite1rect.y > floor:
-        gravity = 0
-        sprite1rect.y = floor
-    # Making our sprite jump
-    if SpacePressed == True and sprite1rect.y >= floor:
-        gravity = -12
-        continue
+
         
     moving = True
     key = pygame.key.get_pressed()
