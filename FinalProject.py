@@ -66,6 +66,9 @@ mainbackground_image = pygame.image.load("PlayingBackground.png")
 GameIntrowindow = pygame.display.set_mode((windowWidth, windowHeight))
 GameIntroScreenbg = pygame.image.load("GameIntroScreen.png")
 
+# Instructions window bg
+InstructionsWindowbg = pygame.image.load("starrysky.png")
+
 
 sprite1 = pygame.image.load("Knight1.png")
 sprite1rect = sprite1.get_rect()  # Returns information about our sprite1
@@ -152,6 +155,10 @@ Knight1SlashAnimation1 = pygame.image.load("Knight1SlashAnimation1.png")
 Knight1SlashAnimation2 = pygame.image.load("Knight1SlashAnimation2.png")
 Knight1SlashAnimation3 = pygame.image.load("Knight1SlashAnimation3.png")
 
+Knight2SlashAnimation1 = pygame.image.load("Knight2SlashAnimation1.png")
+Knight2SlashAnimation2 = pygame.image.load("Knight2SlashAnimation2.png")
+Knight2SlashAnimation3 = pygame.image.load("Knight2SlashAnimation3.png")
+
 
 
 
@@ -235,8 +242,15 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouseX, mouseY = pygame.mouse.get_pos()
             if event.button == 1:  # Check for left mouse button
-                new_projectile = Projectile(sprite1rect.x + sprite1rect.width, sprite1rect.y + sprite1rect.height // 2, 20, 20)
-                projectile_group.add(new_projectile)
+                if gameState == "Axe Warrior Playing":
+                    new_projectile = Projectile(sprite1rect.x + sprite1rect.width, sprite1rect.y + sprite1rect.height // 2, 20, 20)
+                    projectile_group.add(new_projectile)
+                if gameState == "Brave Knight Playing":
+                    new_projectile = Projectile(sprite2rect.x + sprite2rect.width, sprite2rect.y + sprite2rect.height // 2, 20, 20)
+                    projectile_group.add(new_projectile)
+                if gameState == "Dark Knight Playing":
+                    new_projectile = Projectile(sprite3rect.x + sprite3rect.width, sprite3rect.y + sprite3rect.height // 2, 20, 20)
+                    projectile_group.add(new_projectile)
                 mousePressed = True  # Set the flag to True when the left mouse button is pressed
                 
     # Update the timer
@@ -322,27 +336,32 @@ while True:
         
     elif gameState == "instructions":
         if mousePressed == True:
-            mainwindow.fill((255,255,255))
+            # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
+            if mouseX > 400 and mouseX < 500 and mouseY > 120 and mouseY < 170:
+                gameState = "IntroScreen"
+                print(gameState)
+                
+            menuwindow.blit(InstructionsWindowbg,(0,0))
             # Drawing our title
-            titleText = font3.render("Instructions", 1, "black")
+            titleText = font3.render("Instructions", 1, "white")
             mainwindow.blit(titleText, (40, 10))
             
             # Drawing each line of instructions
-            line1 = font1.render("1. Use 'A' and 'D' keys to move left and right.", 1, pygame.Color("black"))
+            line1 = font1.render("1. Use 'A' and 'D' keys to move left and right.", 1, pygame.Color("white"))
             mainwindow.blit(line1, (10, 70))
-            line2 = font1.render("2. Press 'SPACE' to jump.", 1, pygame.Color("black"))
+            line2 = font1.render("2. Press 'SPACE' to jump.", 1, pygame.Color("white"))
             mainwindow.blit(line2, (10, 110))
-            line3 = font1.render("3. Press 'r' to shoot projectiles. ", 1, pygame.Color("black"))
+            line3 = font1.render("3. Press 'r' to shoot projectiles. ", 1, pygame.Color("white"))
             mainwindow.blit(line3, (10, 150))
-            line4 = font1.render("4. Retrieve The magical gem to save the kingdom.).", 1, pygame.Color("black"))
+            line4 = font1.render("4. Retrieve The magical gem to save the kingdom.).", 1, pygame.Color("white"))
             mainwindow.blit(line4, (10, 190))
-            line5 = font1.render("Good Luck!", 1, pygame.Color("black"))
+            line5 = font1.render("Good Luck!", 1, pygame.Color("white"))
             mainwindow.blit(line5, (10, 230))
         
             # Drawing the menu button
-            pygame.draw.rect(mainwindow, pygame.Color("white"), (490, 120, 100, 50)) # The Box
-            menuText = font1.render("Menu", 1, "black")
-            mainwindow.blit(menuText, (507, 128)) # The Text
+            pygame.draw.rect(mainwindow, pygame.Color("dark blue"), (400, 120, 100, 50)) # The Box
+            menuText = font1.render("Menu", 1, "white")
+            mainwindow.blit(menuText, (417, 128)) # The Text
             
     elif gameState == "Axe Warrior Play GIS":
         if mousePressed == True:
@@ -417,7 +436,7 @@ while True:
         
         # Update and draw projectiles
         projectile_group.update()
-        projectile_group.draw(mainwindow)  # Draw projectiles on the game window
+        projectile_group.draw(mainwindow)  # Draw s on the game window
         # Create frog enemy at the right edge of the screen
         if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
             new_frog_enemy = FrogEnemy(windowWidth, floor)
@@ -442,12 +461,18 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+        # Update and draw projectiles
+        projectile_group.update()
+        projectile_group.draw(mainwindow)  # Draws on the game window
             
     elif gameState == "Dark Knight Playing":
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+        # Update and draw projectiles
+        projectile_group.update()
+        projectile_group.draw(mainwindow)  # Draws on the game window
             
     elif gameState == "Game Over You Lost":
         # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
@@ -563,7 +588,7 @@ while True:
     if frame > 49:
         frame = 0
         
-        # Running Animation logic for Knight2
+    # Running Animation logic for Knight2
     if moving == True:
         if frame == 0:
             sprite2 = pygame.transform.scale(Running1Knight2, spriteSize)
@@ -692,6 +717,19 @@ while True:
             sprite3Display = pygame.transform.scale(Idle5Knight3, (270,270))
             frame = 0
     if frame > 40:
+        frame = 0
+    
+    # Character slash animations
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if frame == 0:
+            sprite2 = pygame.transform.scale(Knight2SlashAnimation1, spriteSize)
+        elif frame == 3:
+            sprite2 = pygame.transform.scale(Knight2SlashAnimation2, spriteSize)
+        elif frame == 6:
+            sprite2 = pygame.transform.scale(Knight2SlashAnimation3, spriteSize)
+        elif frame == 9:
+            frame = 0
+    if frame > 30:
         frame = 0
 
     # *********DRAW THE FRAME**********
