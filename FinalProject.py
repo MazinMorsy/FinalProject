@@ -25,7 +25,6 @@ spritesRectwidth = 64
 spritesRectheight = 64
 sprite1rect = pygame.Rect(100, 185, spritesRectwidth, spritesRectheight)
 floor = 185
-floor2 = 250
 spriteSize = (64, 64)
 sprite_speed = 3
 SpacePressed = False  # Initialize SpacePressed variable
@@ -88,7 +87,6 @@ Heart3 = pygame.image.load("Heart3.png")
 Door = pygame.image.load("Door.png")
 Doorrect = Door.get_rect()
 
-King = pygame.image.load("King.png")
 
 # Choosing Characters Pictures
 sprite1Display = pygame.image.load("Knight1.png")
@@ -304,10 +302,10 @@ while True:
                 gameState = "Axe Warrior Play GIS"
                 print(gameState)
             elif mouseX > 175 and mouseX < 325 and mouseY > 240 and mouseY < 290:
-                gameState = "Brave Knight Playing"
+                gameState = "Brave Knight Play GIS"
                 print(gameState)
             elif mouseX > 345 and mouseX < 495 and mouseY > 240 and mouseY < 290:
-                gameState = "Dark Knight Playing"
+                gameState = "Dark Knight Play GIS"
                 print(gameState)
 
                 
@@ -369,7 +367,6 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(GameIntroScreenbg, (0, 0))
             mainwindow.blit(Door, (485,110))
-            mainwindow.blit(King, (100,100))
             mainwindow.blit(Heart1, (400,0))
             mainwindow.blit(Heart2, (425,0))
             mainwindow.blit(Heart3, (450,0))
@@ -396,44 +393,121 @@ while True:
                 # Causes our character to fall
                 gravity = gravity + 1
                 sprite1rect.y = sprite1rect.y + gravity
-                # Stops our sprite from falling when it hits the coordinates that we chose for the floor2
-                if sprite1rect.y > floor2:
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+            if gameState == "Axe Warrior Play GIS":
+                floor = 150
+                sprite_speed = 2
+                if sprite1rect.y > floor:
                     gravity = 0
-                    sprite1rect.y = floor2
+                    sprite1rect.y = floor
                 # Making our sprite jump
-                if SpacePressed == True and sprite1rect.y >= floor2:
+                if SpacePressed == True and sprite1rect.y >= floor:
                     gravity = -12
                     continue
 
             if sprite1rect.colliderect(Doorrect):
-                gameState = "Axe Warrior Playing"
+                gameState = "Axe Warrior Play GIS"
+                
+    elif gameState == "Brave Knight Play GIS":
+        if mousePressed == True:
+            
+            # Drawing the background for the menu window
+            mainwindow.blit(GameIntroScreenbg, (0, 0))
+            mainwindow.blit(Door, (485,110))
+            mainwindow.blit(Heart1, (400,0))
+            mainwindow.blit(Heart2, (425,0))
+            mainwindow.blit(Heart3, (450,0))
+            mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+            
+            # Play the game over sound effect only once
+            if not MonsterRoarPlayed:
+                MonsterRoar.play()
+                MonsterRoarPlayed = True
+            
+            if gameState == "Brave Knight Play GIS":
+                moving = True
+                key = pygame.key.get_pressed()
+                if key[pygame.K_d] == True:
+                    sprite2rect.x = sprite2rect.x + sprite_speed
+                elif key[pygame.K_a] == True:
+                    sprite2rect.x = sprite2rect.x - sprite_speed
+                elif key[pygame.K_SPACE] == True:
+                    sprite2rect.y = sprite2rect.y - sprite_speed
+                    SpacePressed = True
+                else:
+                    SpacePressed = False
+                    moving = False
+                # Causes our character to fall
+                gravity = gravity + 1
+                sprite2rect.y = sprite2rect.y + gravity
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+            if gameState == "Brave Knight Play GIS":
+                floor = 157
+                sprite_speed = 2
+                if sprite2rect.y > floor:
+                    gravity = 0
+                    sprite2rect.y = floor
+                # Making our sprite jump
+                if SpacePressed == True and sprite2rect.y >= floor:
+                    gravity = -12
+                    continue
+
+            if sprite3rect.colliderect(Doorrect):
+                gameState = "Brave Knight Play GIS"
+            
+    elif gameState == "Dark Knight Play GIS":
+        if mousePressed == True:
+            
+            # Drawing the background for the menu window
+            mainwindow.blit(GameIntroScreenbg, (0, 0))
+            mainwindow.blit(Door, (485,110))
+            mainwindow.blit(Heart1, (400,0))
+            mainwindow.blit(Heart2, (425,0))
+            mainwindow.blit(Heart3, (450,0))
+            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+            
+            # Play the game over sound effect only once
+            if not MonsterRoarPlayed:
+                MonsterRoar.play()
+                MonsterRoarPlayed = True
+            
+            if gameState == "Dark Knight Play GIS":
+                moving = True
+                key = pygame.key.get_pressed()
+                if key[pygame.K_d] == True:
+                    sprite3rect.x = sprite3rect.x + sprite_speed
+                elif key[pygame.K_a] == True:
+                    sprite3rect.x = sprite3rect.x - sprite_speed
+                elif key[pygame.K_SPACE] == True:
+                    sprite3rect.y = sprite3rect.y - sprite_speed
+                    SpacePressed = True
+                else:
+                    SpacePressed = False
+                    moving = False
+                # Causes our character to fall
+                gravity = gravity + 1
+                sprite3rect.y = sprite3rect.y + gravity
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+            if gameState == "Dark Knight Play GIS":
+                floor = 157
+                sprite_speed = 1
+                if sprite3rect.y > floor:
+                    gravity = 0
+                    sprite3rect.y = floor
+                # Making our sprite jump
+                if SpacePressed == True and sprite3rect.y >= floor:
+                    gravity = -12
+                    continue
+
+            if sprite3rect.colliderect(Doorrect):
+                gameState = "Dark Knight Playing"
                 
     elif gameState == "Axe Warrior Playing":
+        floor = 190
+        sprite_speed = 3
         if mousePressed == True:
             mainwindow.blit(mainbackground_image,(0,0))
-        moving = True
-        key = pygame.key.get_pressed()
-        if key[pygame.K_d] == True:
-            sprite1rect.x = sprite1rect.x + sprite_speed
-        elif key[pygame.K_a] == True:
-            sprite1rect.x = sprite1rect.x - sprite_speed
-        elif key[pygame.K_SPACE] == True:
-            sprite1rect.y = sprite1rect.y - sprite_speed
-            SpacePressed = True
-        else:
-            SpacePressed = False
-            moving = False
-        # Causes our character to fall
-        gravity = gravity + 1
-        sprite1rect.y = sprite1rect.y + gravity
-        # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-        if sprite1rect.y > floor:
-            gravity = 0
-            sprite1rect.y = floor
-        # Making our sprite jump
-        if SpacePressed == True and sprite1rect.y >= floor:
-            gravity = -12
-        
+            mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
         # Update and draw projectiles
         projectile_group.update()
         projectile_group.draw(mainwindow)  # Draw s on the game window
@@ -451,12 +525,9 @@ while True:
         timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
         mainwindow.blit(timer_text, (10, 10))
             
-            
-        if sprite1rect.colliderect(FrogEnemyrect):
-            pygame.quit()
-            continue
-            
     elif gameState == "Brave Knight Playing":
+        floor = 190
+        sprite_speed = 3
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
@@ -466,6 +537,8 @@ while True:
         projectile_group.draw(mainwindow)  # Draws on the game window
             
     elif gameState == "Dark Knight Playing":
+        floor = 190
+        sprite_speed = 3
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
@@ -502,32 +575,6 @@ while True:
     # *********GAME LOGIC**********
     # Setting our keybinds to see if a specific key is pressed to subtract or add to the Sprites x and y coordinates
     # to move by sprite speed variable that we created
-
-        
-    moving = True
-    key = pygame.key.get_pressed()
-    if key[pygame.K_d] == True:
-        sprite2rect.x = sprite2rect.x + sprite_speed
-    elif key[pygame.K_a] == True:
-        sprite2rect.x = sprite2rect.x - sprite_speed
-    elif key[pygame.K_SPACE] == True:
-        sprite2rect.y = sprite2rect.y - sprite_speed
-        SpacePressed = True
-    else:
-        SpacePressed = False
-        moving = False
-    # Causes our character to fall
-    gravity = gravity + 1
-    sprite2rect.y = sprite2rect.y + gravity
-    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-    if sprite2rect.y > floor:
-        gravity = 0
-        sprite2rect.y = floor
-    # Making our sprite jump
-    if SpacePressed == True and sprite2rect.y >= floor:
-        gravity = -12
-        continue
-        
     moving = True
     key = pygame.key.get_pressed()
     if key[pygame.K_d] == True:
