@@ -157,6 +157,10 @@ Knight2SlashAnimation1 = pygame.image.load("Knight2SlashAnimation1.png")
 Knight2SlashAnimation2 = pygame.image.load("Knight2SlashAnimation2.png")
 Knight2SlashAnimation3 = pygame.image.load("Knight2SlashAnimation3.png")
 
+Knight3SlashAnimation1 = pygame.image.load("Knight3SlashAnimation1.png")
+Knight3SlashAnimation2 = pygame.image.load("Knight3SlashAnimation2.png")
+Knight3SlashAnimation3 = pygame.image.load("Knight3SlashAnimation3.png")
+
 
 
 
@@ -767,17 +771,45 @@ while True:
         frame = 0
     
     # Character slash animations
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        if frame == 0:
-            sprite2 = pygame.transform.scale(Knight2SlashAnimation1, spriteSize)
-        elif frame == 3:
-            sprite2 = pygame.transform.scale(Knight2SlashAnimation2, spriteSize)
-        elif frame == 6:
-            sprite2 = pygame.transform.scale(Knight2SlashAnimation3, spriteSize)
-        elif frame == 9:
+    if gameState == "Axe Warrior Play GIS":
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if frame == 0:
+                sprite1 = pygame.transform.scale(Knight1SlashAnimation1, spriteSize)
+            elif frame == 3:
+                sprite1 = pygame.transform.scale(Knight1SlashAnimation2, spriteSize)
+            elif frame == 6:
+                sprite1 = pygame.transform.scale(Knight1SlashAnimation3, spriteSize)
+            elif frame == 9:
+                frame = 0
+        if frame > 30:
             frame = 0
-    if frame > 30:
-        frame = 0
+    
+    if gameState == "Brave Knight Playing":
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if frame == 0:
+                sprite2 = pygame.transform.scale(Knight2SlashAnimation1, spriteSize)
+            elif frame == 3:
+                sprite2 = pygame.transform.scale(Knight2SlashAnimation2, spriteSize)
+            elif frame == 6:
+                sprite2 = pygame.transform.scale(Knight2SlashAnimation3, spriteSize)
+            elif frame == 9:
+                frame = 0
+        if frame > 30:
+            frame = 0
+            
+    if gameState == "Dark Knight Playing":
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if frame == 0:
+                sprite3 = pygame.transform.scale(Knight3SlashAnimation1, spriteSize)
+            elif frame == 3:
+                sprite3 = pygame.transform.scale(Knight3SlashAnimation2, spriteSize)
+            elif frame == 6:
+                sprite3 = pygame.transform.scale(Knight3SlashAnimation3, spriteSize)
+            elif frame == 9:
+                frame = 0
+        if frame > 30:
+            frame = 0
+
 
     # *********DRAW THE FRAME**********
     pygame.display.flip()
