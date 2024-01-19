@@ -162,9 +162,6 @@ Knight3SlashAnimation2 = pygame.image.load("Knight3SlashAnimation2.png")
 Knight3SlashAnimation3 = pygame.image.load("Knight3SlashAnimation3.png")
 
 
-
-
-
 font_path1 = "DUNGEONFONT.ttf"
 font1 = pygame.font.Font(font_path1, 35)
 
@@ -523,11 +520,7 @@ while True:
         # Update and draw frog enemies
         frog_enemy_group.update()
         frog_enemy_group.draw(mainwindow)
-            
-        # Draw the timer
-        timer_font = pygame.font.Font(None, 36)
-        timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
-        mainwindow.blit(timer_text, (10, 10))
+
             
     elif gameState == "Brave Knight Playing":
         floor = 190
@@ -801,15 +794,22 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if frame == 0:
                 sprite3 = pygame.transform.scale(Knight3SlashAnimation1, spriteSize)
-            elif frame == 3:
+            elif frame == 10:
                 sprite3 = pygame.transform.scale(Knight3SlashAnimation2, spriteSize)
-            elif frame == 6:
+            elif frame == 20:
                 sprite3 = pygame.transform.scale(Knight3SlashAnimation3, spriteSize)
-            elif frame == 9:
+            elif frame == 30:
                 frame = 0
         if frame > 30:
             frame = 0
-
+    
+    #Drawing the time string on the screen of the given gamestates
+    if gameState == "Axe Warrior Playing" or gameState == "Brave Knight Playing" or gameState == "Dark Knight Playing":
+        # Draw the timer
+        timer_font = pygame.font.Font(None, 36)
+        timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
+        mainwindow.blit(timer_text, (10, 10))
+        
 
     # *********DRAW THE FRAME**********
     pygame.display.flip()
