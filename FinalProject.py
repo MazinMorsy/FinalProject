@@ -190,8 +190,8 @@ class Projectile(pygame.sprite.Sprite):
         original_image = pygame.image.load("Slash.png") 
         self.image =  pygame.transform.scale(original_image, (width, height))
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = x - 20
+        self.rect.y = y + -20
         self.speed = 10  # Set the projectile speed
 
     def update(self):
@@ -379,23 +379,7 @@ while True:
                 MonsterRoarPlayed = True
             
             if gameState == "Axe Warrior Play GIS":
-                moving = True
-                key = pygame.key.get_pressed()
-                if key[pygame.K_d] == True:
-                    sprite1rect.x = sprite1rect.x + sprite_speed
-                elif key[pygame.K_a] == True:
-                    sprite1rect.x = sprite1rect.x - sprite_speed
-                elif key[pygame.K_SPACE] == True:
-                    sprite1rect.y = sprite1rect.y - sprite_speed
-                    SpacePressed = True
-                else:
-                    SpacePressed = False
-                    moving = False
-                # Causes our character to fall
-                gravity = gravity + 1
-                sprite1rect.y = sprite1rect.y + gravity
                 # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-            if gameState == "Axe Warrior Play GIS":
                 floor = 150
                 sprite_speed = 2
                 if sprite1rect.y > floor:
@@ -404,11 +388,10 @@ while True:
                 # Making our sprite jump
                 if SpacePressed == True and sprite1rect.y >= floor:
                     gravity = -12
+                if sprite1rect.colliderect(Doorrect):
+                    gameState = "Axe Warrior Playing"
                     continue
-
-            if sprite1rect.colliderect(Doorrect):
-                gameState = "Axe Warrior Play GIS"
-                
+               
     elif gameState == "Brave Knight Play GIS":
         if mousePressed == True:
             
@@ -424,24 +407,8 @@ while True:
             if not MonsterRoarPlayed:
                 MonsterRoar.play()
                 MonsterRoarPlayed = True
-            
-            if gameState == "Brave Knight Play GIS":
-                moving = True
-                key = pygame.key.get_pressed()
-                if key[pygame.K_d] == True:
-                    sprite2rect.x = sprite2rect.x + sprite_speed
-                elif key[pygame.K_a] == True:
-                    sprite2rect.x = sprite2rect.x - sprite_speed
-                elif key[pygame.K_SPACE] == True:
-                    sprite2rect.y = sprite2rect.y - sprite_speed
-                    SpacePressed = True
-                else:
-                    SpacePressed = False
-                    moving = False
-                # Causes our character to fall
-                gravity = gravity + 1
-                sprite2rect.y = sprite2rect.y + gravity
-                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+
+            # Stops our sprite from falling when it hits the coordinates that we chose for the floor
             if gameState == "Brave Knight Play GIS":
                 floor = 157
                 sprite_speed = 2
@@ -450,12 +417,11 @@ while True:
                     sprite2rect.y = floor
                 # Making our sprite jump
                 if SpacePressed == True and sprite2rect.y >= floor:
-                    gravity = -12
+                    gravity = -20
+                if sprite2rect.colliderect(Doorrect):
+                    gameState = "Brave Knight Playing"
                     continue
-
-            if sprite3rect.colliderect(Doorrect):
-                gameState = "Brave Knight Play GIS"
-            
+                    
     elif gameState == "Dark Knight Play GIS":
         if mousePressed == True:
             
@@ -498,10 +464,9 @@ while True:
                 # Making our sprite jump
                 if SpacePressed == True and sprite3rect.y >= floor:
                     gravity = -12
+                if sprite3rect.colliderect(Doorrect):
+                    gameState = "Dark Knight Playing"
                     continue
-
-            if sprite3rect.colliderect(Doorrect):
-                gameState = "Dark Knight Playing"
                 
     elif gameState == "Axe Warrior Playing":
         floor = 190
@@ -509,17 +474,6 @@ while True:
         if mousePressed == True:
             mainwindow.blit(mainbackground_image,(0,0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
-        # Update and draw projectiles
-        projectile_group.update()
-        projectile_group.draw(mainwindow)  # Draw s on the game window
-        # Create frog enemy at the right edge of the screen
-        if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
-            new_frog_enemy = FrogEnemy(windowWidth, floor)
-            frog_enemy_group.add(new_frog_enemy)
-                
-        # Update and draw frog enemies
-        frog_enemy_group.update()
-        frog_enemy_group.draw(mainwindow)
 
             
     elif gameState == "Brave Knight Playing":
@@ -593,6 +547,54 @@ while True:
         sprite3rect.y = floor
     # Making our sprite jump
     if SpacePressed == True and sprite3rect.y >= floor:
+        gravity = -12
+        continue
+    
+    moving = True
+    key = pygame.key.get_pressed()
+    if key[pygame.K_d] == True:
+        sprite2rect.x = sprite2rect.x + sprite_speed
+    elif key[pygame.K_a] == True:
+        sprite2rect.x = sprite2rect.x - sprite_speed
+    elif key[pygame.K_SPACE] == True:
+        sprite2rect.y = sprite2rect.y - sprite_speed
+        SpacePressed = True
+    else:
+        SpacePressed = False
+        moving = False
+    # Causes our character to fall
+    gravity = gravity + 1
+    sprite2rect.y = sprite2rect.y + gravity
+    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+    if sprite2rect.y > floor:
+        gravity = 0
+        sprite2rect.y = floor
+    # Making our sprite jump
+    if SpacePressed == True and sprite2rect.y >= floor:
+        gravity = -12
+        continue
+    
+    moving = True
+    key = pygame.key.get_pressed()
+    if key[pygame.K_d] == True:
+        sprite1rect.x = sprite1rect.x + sprite_speed
+    elif key[pygame.K_a] == True:
+        sprite1rect.x = sprite1rect.x - sprite_speed
+    elif key[pygame.K_SPACE] == True:
+        sprite1rect.y = sprite1rect.y - sprite_speed
+        SpacePressed = True
+    else:
+        SpacePressed = False
+        moving = False
+    # Causes our character to fall
+    gravity = gravity + 1
+    sprite1rect.y = sprite1rect.y + gravity
+    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+    if sprite1rect.y > floor:
+        gravity = 0
+        sprite1rect.y = floor
+    # Making our sprite jump
+    if SpacePressed == True and sprite1rect.y >= floor:
         gravity = -12
         continue
         
@@ -764,7 +766,7 @@ while True:
         frame = 0
     
     # Character slash animations
-    if gameState == "Axe Warrior Play GIS":
+    if gameState == "Axe Warrior Playing":
         if event.type == pygame.MOUSEBUTTONDOWN:
             if frame == 0:
                 sprite1 = pygame.transform.scale(Knight1SlashAnimation1, spriteSize)
@@ -809,6 +811,18 @@ while True:
         timer_font = pygame.font.Font(None, 36)
         timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
         mainwindow.blit(timer_text, (10, 10))
+        
+        # Update and draw projectiles in the following gamestates
+        projectile_group.update()
+        projectile_group.draw(mainwindow)  # Draw s on the game window
+        # Create frog enemy at the right edge of the screen
+        if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
+            new_frog_enemy = FrogEnemy(windowWidth, floor)
+            frog_enemy_group.add(new_frog_enemy)
+                
+        # Update and draw frog enemies
+        frog_enemy_group.update()
+        frog_enemy_group.draw(mainwindow)
         
 
     # *********DRAW THE FRAME**********
