@@ -21,6 +21,13 @@ clock = pygame.time.Clock()  # Create a clock object
 
 moving = False
 mousePressed = False
+
+# variable to track the music state
+music_paused = False
+
+# variable to track the button state
+music_button_pressed = False
+
 sprite_speed = 3
 gameState = "IntroScreen"
 
@@ -182,8 +189,11 @@ font3 = pygame.font.Font(font_path2, 75)
 font_path4 = "DUNGEONFONT.ttf"
 font4 = pygame.font.Font(font_path1, 50)
 
-font_path5 = "PixelatedDisplay.ttf"
+font_path5 = "Pixel.ttf"
 font5 = pygame.font.Font(font_path5, 15)
+
+font_path6 = "Pixel.ttf"
+font6 = pygame.font.Font(font_path6, 30)
 
 #Background Music
 pygame.mixer.music.load("DungeonMusic.mp3")
@@ -234,6 +244,7 @@ class FrogEnemy(pygame.sprite.Sprite):
             self.index = 0
         self.image = self.running_images[self.index]
         
+# Shaking window function        
 def shake_mainwindow(surface, duration, magnitude):
     start_time = pygame.time.get_ticks()
     original_position = surface.get_rect().topleft
@@ -246,6 +257,17 @@ def shake_mainwindow(surface, duration, magnitude):
     # Restore the original position
     mainwindow.blit(surface, original_position)
     pygame.display.update()
+
+# Function to toggle music state and button color
+def toggle_music_mute():
+    global music_paused, music_button_pressed
+    music_paused = not music_paused  # Toggle between True and False
+    music_button_pressed = not music_button_pressed  # Toggle between True and False
+
+    if music_paused:
+        pygame.mixer.music.pause()
+    else:
+        pygame.mixer.music.unpause()
 
 
 # Projectile group
@@ -273,10 +295,10 @@ while True:
                 if gameState == "Dark Knight Playing":
                     new_projectile = Projectile(sprite3rect.x + sprite3rect.width, sprite3rect.y + sprite3rect.height // 2, 20, 20)
                     projectile_group.add(new_projectile)
-                mousePressed = True  # Set the flag to True when the left mouse button is pressed
-                
-    # Update the timer
-    current_time += clock.get_rawtime() / 1000
+                # Check if "Music" button is pressed
+                if 10 < mouseX < 110 and 230 < mouseY < 280:
+                    toggle_music_mute()
+                    mousePressed = True  # Set the flag to True when the left mouse button is pressed
 
 
     # Check for collisions between projectiles and frog enemies
@@ -297,8 +319,8 @@ while True:
                 print(gameState)   
             elif mouseX > 180 and mouseX < 380 and mouseY > 150 and mouseY < 195:
                 gameState = "menu"
-                print(gameState)
-                
+                print(gameState)        
+
         # Drawing the background for the Intro window
         Introwindow.blit(Introbackground_image, (0, 0))
         # Drawing the instructions button with text
@@ -309,6 +331,11 @@ while True:
         pygame.draw.rect(Introwindow, pygame.Color("firebrick"), (180, 150, 200, 50)) # The Box
         playText = font4.render("Play", 1, "black")
         Introwindow.blit(playText, (234, 145)) # The Text
+        # Drawing the button with color based on its state
+        button_color = pygame.Color("green") if not music_button_pressed else pygame.Color("red")
+        pygame.draw.rect(Introwindow, button_color, (10, 230, 100, 50))  # The Box
+        MusicText = font6.render("Music", 1, "black")
+        Introwindow.blit(MusicText, (17, 240))  # The Text
     
         word1 = "Dungeon"
         renderedText = font3.render(word1, 1, pygame.Color("red"))
@@ -798,6 +825,9 @@ while True:
         frog_enemy_group.update()
         frog_enemy_group.draw(mainwindow)
         
+        # Update the timer
+        current_time += clock.get_rawtime() / 1000
+        
     if gameState == "Axe Warrior Play GIS" or gameState == "Brave Knight Play GIS" or gameState == "Dark Knight Play GIS":
         mainwindow.blit(Wizard, (400,167))
         mainwindow.blit(SpeechBubble, (280,40))
@@ -808,7 +838,7 @@ while True:
         line2 = font5.render("magical gem to", 1, pygame.Color("black"))
         mainwindow.blit(line2, (290, 85))
         line3 = font5.render("save our nation", 1, pygame.Color("black"))
-        mainwindow.blit(line3, (290, 100))
+        mainwindow.blit(line3, (285, 100))
         line4 = font5.render("young hero!", 1, pygame.Color("black"))
         mainwindow.blit(line4, (310, 115))
         
@@ -818,8 +848,7 @@ while True:
             MonsterRoarPlayed = True
             
             # Shake the intro screen
-            shake_mainwindow(GameIntroScreenbg, 9000, 5)  # Shake for 11000 milliseconds with a magnitude of 5
-        
+            shake_mainwindow(GameIntroScreenbg, 9000, 10)  # Shake for 9000 milliseconds with a magnitude of 10
         
     # *********DRAW THE FRAME**********
     pygame.display.flip()
