@@ -35,7 +35,6 @@ sprite1Display = pygame.image.load("Knight1.png")
 
 spritesRectwidth = 64
 spritesRectheight = 64
-sprite1rect = pygame.Rect(100, 185, spritesRectwidth, spritesRectheight)
 floor = 185
 spriteSize = (64, 64)
 sprite_speed = 3
@@ -43,7 +42,7 @@ SpacePressed = False  # Initialize SpacePressed variable
 MonsterRoar = pygame.mixer.Sound("TitanROAR.wav")
 MonsterRoarPlayed = False
 
-doorsrectwidth = 64
+doorsrectwidth = 44
 doorsrectheight = 64
 Doorrect = pygame.Rect(485,110, doorsrectwidth,doorsrectheight )
 
@@ -102,16 +101,10 @@ Heart3 = pygame.image.load("Heart3.png")
 Door = pygame.image.load("Door.png")
 Doorrect = Door.get_rect()
 
-
 # Choosing Characters Pictures
 sprite1Display = pygame.image.load("Knight1.png")
-sprite1Displayrect = sprite1Display.get_rect()  # Returns information about our sprite1
-
 sprite2Display = pygame.image.load("Knight2.png")
-sprite2Displayrect = sprite2Display.get_rect()  # Returns information about our sprite2
-
 sprite3Display = pygame.image.load("Knight3.png")
-sprite3Displayrect = sprite3Display.get_rect()  # Returns information about our sprite3
 
 # Idle Animations
 Idle1Knight1 = pygame.image.load("Idle animation1 knight1.png")
@@ -160,7 +153,6 @@ Running5Knight3 = pygame.image.load("RunningAnimation5Knight3.png")
 Running6Knight3 = pygame.image.load("RunningAnimation6Knight3.png")
 Running7Knight3 = pygame.image.load("RunningAnimation7Knight3.png")
 Running8Knight3 = pygame.image.load("RunningAnimation8Knight3.png")
-
 
 
 # Slash Attack Animations for our characters
@@ -296,10 +288,10 @@ while True:
                     new_projectile = Projectile(sprite3rect.x + sprite3rect.width, sprite3rect.y + sprite3rect.height // 2, 20, 20)
                     projectile_group.add(new_projectile)
                 # Check if "Music" button is pressed
-                if 10 < mouseX < 110 and 230 < mouseY < 280:
-                    toggle_music_mute()
-                    mousePressed = True  # Set the flag to True when the left mouse button is pressed
-
+                if gameState == "IntroScreen":
+                    if 10 < mouseX < 110 and 230 < mouseY < 280:
+                        mousePressed = True  # Set the flag to True when the left mouse button is pressed
+                        toggle_music_mute()
 
     # Check for collisions between projectiles and frog enemies
     frog_enemy_hit_list = pygame.sprite.groupcollide(frog_enemy_group, projectile_group, True, True)
@@ -416,7 +408,7 @@ while True:
             
             # Drawing the background for the menu window
             mainwindow.blit(GameIntroScreenbg, (0, 0))
-            mainwindow.blit(Door, (485,110))
+            mainwindow.blit(Door, (500,138))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
 
                 
@@ -841,6 +833,8 @@ while True:
         mainwindow.blit(line3, (285, 100))
         line4 = font5.render("young hero!", 1, pygame.Color("black"))
         mainwindow.blit(line4, (310, 115))
+        
+        Doorrect = pygame.Rect(515,110, doorsrectwidth,doorsrectheight )
         
         # Play the game over sound effect only once
         if not MonsterRoarPlayed:
