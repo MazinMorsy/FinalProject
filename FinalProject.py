@@ -403,88 +403,26 @@ while True:
             menuText = font1.render("Menu", 1, "white")
             mainwindow.blit(menuText, (417, 128)) # The Text
             
-    elif gameState == "Axe Warrior Play GIS":
-        if mousePressed == True:
-            
-            # Drawing the background for the menu window
-            mainwindow.blit(GameIntroScreenbg, (0, 0))
-            mainwindow.blit(Door, (500,138))
-            mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
-
-                
-            if gameState == "Axe Warrior Play GIS":
-                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-                floor = 150
-                sprite_speed = 2
-                if sprite1rect.y > floor:
-                    sprite1rect.y = floor
-                # Making our sprite jump
-                if SpacePressed == True and sprite1rect.y >= floor:
-                    gravitysprite1 = -12
-                if sprite1rect.colliderect(Doorrect):
-                    gameState = "Axe Warrior Playing"
-                    continue
-               
-    elif gameState == "Brave Knight Play GIS":
-        if mousePressed == True:
-            
-            # Drawing the background for the menu window
-            mainwindow.blit(GameIntroScreenbg, (0, 0))
-            mainwindow.blit(Door, (485,110))
-            mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
-
-            # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-            if gameState == "Brave Knight Play GIS":
-                floor = 157
-                sprite_speed = 2
-                if sprite2rect.colliderect(Doorrect):
-                    gameState = "Brave Knight Playing"
-                    continue
-                    
-    elif gameState == "Dark Knight Play GIS":
-        if mousePressed == True:
-            
-            # Drawing the background for the menu window
-            mainwindow.blit(GameIntroScreenbg, (0, 0))
-            mainwindow.blit(Door, (485,110))
-            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
-                
-            if gameState == "Dark Knight Play GIS":
-                floor = 157
-                sprite_speed = 2
-                if sprite3rect.colliderect(Doorrect):
-                    gameState = "Dark Knight Playing"
-                    continue
                 
     elif gameState == "Axe Warrior Playing":
-        floor = 190
-        sprite_speed = 3
         if mousePressed == True:
+            # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image,(0,0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
 
             
     elif gameState == "Brave Knight Playing":
-        floor = 190
-        sprite_speed = 3
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
-        # Update and draw projectiles
-        projectile_group.update()
-        projectile_group.draw(mainwindow)  # Draws on the game window
             
     elif gameState == "Dark Knight Playing":
-        floor = 190
-        sprite_speed = 3
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
-        # Update and draw projectiles
-        projectile_group.update()
-        projectile_group.draw(mainwindow)  # Draws on the game window
+
             
     elif gameState == "Game Over You Lost":
         # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
@@ -805,6 +743,9 @@ while True:
         mainwindow.blit(Heart2, (425,0))
         mainwindow.blit(Heart3, (450,0))
         
+        floor = 190
+        sprite_speed = 3
+        
         # Update and draw projectiles in the following gamestates
         projectile_group.update()
         projectile_group.draw(mainwindow)  # Draw s on the game window
@@ -821,9 +762,14 @@ while True:
         current_time += clock.get_rawtime() / 1000
         
     if gameState == "Axe Warrior Play GIS" or gameState == "Brave Knight Play GIS" or gameState == "Dark Knight Play GIS":
+        
+        # Drawing the background for the menu window
+        mainwindow.blit(GameIntroScreenbg, (0, 0))
         mainwindow.blit(Wizard, (400,167))
         mainwindow.blit(SpeechBubble, (280,40))
-        
+        mainwindow.blit(Door, (500,138))
+        Doorrect = pygame.Rect(515,110, doorsrectwidth,doorsrectheight )
+
         # Drawing the wizards text within the speech bubble
         line1 = font5.render("Retrieve the", 1, pygame.Color("black"))
         mainwindow.blit(line1, (295, 70))
@@ -834,8 +780,47 @@ while True:
         line4 = font5.render("young hero!", 1, pygame.Color("black"))
         mainwindow.blit(line4, (310, 115))
         
-        Doorrect = pygame.Rect(515,110, doorsrectwidth,doorsrectheight )
-        
+        if gameState == "Axe Warrior Play GIS":
+            if mousePressed == True:
+                mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+
+                
+                if gameState == "Axe Warrior Play GIS":
+                    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                    floor = 150
+                    sprite_speed = 2
+                    if sprite1rect.y > floor:
+                        sprite1rect.y = floor
+                    # Making our sprite jump
+                    if SpacePressed == True and sprite1rect.y >= floor:
+                        gravitysprite1 = -12
+                    if sprite1rect.colliderect(Doorrect):
+                        gameState = "Axe Warrior Playing"
+                        continue
+               
+        elif gameState == "Brave Knight Play GIS":
+            if mousePressed == True:
+                mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                if gameState == "Brave Knight Play GIS":
+                    floor = 157
+                    sprite_speed = 2
+                    if sprite2rect.colliderect(Doorrect):
+                        gameState = "Brave Knight Playing"
+                        continue
+                    
+        elif gameState == "Dark Knight Play GIS":
+            if mousePressed == True:
+                mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+                
+                if gameState == "Dark Knight Play GIS":
+                    floor = 157
+                    sprite_speed = 2
+                    if sprite3rect.colliderect(Doorrect):
+                        gameState = "Dark Knight Playing"
+                        continue
+                
         # Play the game over sound effect only once
         if not MonsterRoarPlayed:
             MonsterRoar.play()
