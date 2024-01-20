@@ -1,4 +1,5 @@
 import pygame
+import random
 from pygame import mixer
 
 pygame.init()
@@ -8,9 +9,13 @@ windowWidth = 539
 windowHeight = 286
 
 frame = 0  # Not the FPS but the frame of our animation
-gravity = 0
+gravitysprite1 = 0
+gravitysprite2 = 0
+gravitysprite3 = 0
+
+
+
 FPS = 60
-gravity = 0
 current_time = 0  # Initialize the timer variable
 clock = pygame.time.Clock()  # Create a clock object
 
@@ -68,7 +73,7 @@ GameIntroScreenbg = pygame.image.load("GameIntroScreen.png")
 # Instructions window bg
 InstructionsWindowbg = pygame.image.load("starrysky.png")
 
-
+# Initial appearance of all our characters
 sprite1 = pygame.image.load("Knight1.png")
 sprite1rect = sprite1.get_rect()  # Returns information about our sprite1
 sprite2 = pygame.image.load("Knight2.png")
@@ -76,6 +81,9 @@ sprite2rect = sprite2.get_rect()  # Returns information about our sprite2
 sprite3 = pygame.image.load("Knight3.png")
 sprite3rect = sprite3.get_rect()  # Returns information about our sprite2
 
+
+Wizard = pygame.image.load("Wizard.png")
+SpeechBubble = pygame.image.load("SpeechBubble.png")
 
 FrogEnemy = pygame.image.load("FrogEnemyRun1.png")
 FrogEnemyrect = FrogEnemy.get_rect() # Returns information about our FrogEnemy
@@ -174,12 +182,13 @@ font3 = pygame.font.Font(font_path2, 75)
 font_path4 = "DUNGEONFONT.ttf"
 font4 = pygame.font.Font(font_path1, 50)
 
+font_path5 = "PixelatedDisplay.ttf"
+font5 = pygame.font.Font(font_path5, 15)
+
 #Background Music
 pygame.mixer.music.load("DungeonMusic.mp3")
 pygame.mixer.music.set_volume(1.0)
 pygame.mixer.music.play(-1) # The value -1 keeps it so it loops the bg music forever
-
-
 
 
 # Projectile class
@@ -224,6 +233,20 @@ class FrogEnemy(pygame.sprite.Sprite):
         if self.index >= len(self.running_images):
             self.index = 0
         self.image = self.running_images[self.index]
+        
+def shake_mainwindow(surface, duration, magnitude):
+    start_time = pygame.time.get_ticks()
+    original_position = surface.get_rect().topleft
+    while pygame.time.get_ticks() - start_time < duration:
+        offset = (random.randint(-magnitude, magnitude), random.randint(-magnitude, magnitude))
+        # Update the main window with the back buffer
+        mainwindow.blit(surface, (original_position[0] + offset[0], original_position[1] + offset[1]))
+        pygame.display.update()
+
+    # Restore the original position
+    mainwindow.blit(surface, original_position)
+    pygame.display.update()
+
 
 # Projectile group
 projectile_group = pygame.sprite.Group()
@@ -256,7 +279,6 @@ while True:
     current_time += clock.get_rawtime() / 1000
 
 
-                
     # Check for collisions between projectiles and frog enemies
     frog_enemy_hit_list = pygame.sprite.groupcollide(frog_enemy_group, projectile_group, True, True)
     
@@ -352,7 +374,7 @@ while True:
             mainwindow.blit(line2, (10, 110))
             line3 = font1.render("3. Press 'r' to shoot projectiles. ", 1, pygame.Color("white"))
             mainwindow.blit(line3, (10, 150))
-            line4 = font1.render("4. Retrieve The magical gem to save the kingdom.).", 1, pygame.Color("white"))
+            line4 = font1.render("4. Retrieve The magical gem to save the Kingdom.).", 1, pygame.Color("white"))
             mainwindow.blit(line4, (10, 190))
             line5 = font1.render("Good Luck!", 1, pygame.Color("white"))
             mainwindow.blit(line5, (10, 230))
@@ -368,26 +390,18 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(GameIntroScreenbg, (0, 0))
             mainwindow.blit(Door, (485,110))
-            mainwindow.blit(Heart1, (400,0))
-            mainwindow.blit(Heart2, (425,0))
-            mainwindow.blit(Heart3, (450,0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
-            
-            # Play the game over sound effect only once
-            if not MonsterRoarPlayed:
-                MonsterRoar.play()
-                MonsterRoarPlayed = True
-            
+
+                
             if gameState == "Axe Warrior Play GIS":
                 # Stops our sprite from falling when it hits the coordinates that we chose for the floor
                 floor = 150
                 sprite_speed = 2
                 if sprite1rect.y > floor:
-                    gravity = 0
                     sprite1rect.y = floor
                 # Making our sprite jump
                 if SpacePressed == True and sprite1rect.y >= floor:
-                    gravity = -12
+                    gravitysprite1 = -12
                 if sprite1rect.colliderect(Doorrect):
                     gameState = "Axe Warrior Playing"
                     continue
@@ -398,26 +412,12 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(GameIntroScreenbg, (0, 0))
             mainwindow.blit(Door, (485,110))
-            mainwindow.blit(Heart1, (400,0))
-            mainwindow.blit(Heart2, (425,0))
-            mainwindow.blit(Heart3, (450,0))
             mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
-            
-            # Play the game over sound effect only once
-            if not MonsterRoarPlayed:
-                MonsterRoar.play()
-                MonsterRoarPlayed = True
 
             # Stops our sprite from falling when it hits the coordinates that we chose for the floor
             if gameState == "Brave Knight Play GIS":
                 floor = 157
                 sprite_speed = 2
-                if sprite2rect.y > floor:
-                    gravity = 0
-                    sprite2rect.y = floor
-                # Making our sprite jump
-                if SpacePressed == True and sprite2rect.y >= floor:
-                    gravity = -20
                 if sprite2rect.colliderect(Doorrect):
                     gameState = "Brave Knight Playing"
                     continue
@@ -428,42 +428,11 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(GameIntroScreenbg, (0, 0))
             mainwindow.blit(Door, (485,110))
-            mainwindow.blit(Heart1, (400,0))
-            mainwindow.blit(Heart2, (425,0))
-            mainwindow.blit(Heart3, (450,0))
             mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
-            
-            # Play the game over sound effect only once
-            if not MonsterRoarPlayed:
-                MonsterRoar.play()
-                MonsterRoarPlayed = True
-            
-            if gameState == "Dark Knight Play GIS":
-                moving = True
-                key = pygame.key.get_pressed()
-                if key[pygame.K_d] == True:
-                    sprite3rect.x = sprite3rect.x + sprite_speed
-                elif key[pygame.K_a] == True:
-                    sprite3rect.x = sprite3rect.x - sprite_speed
-                elif key[pygame.K_SPACE] == True:
-                    sprite3rect.y = sprite3rect.y - sprite_speed
-                    SpacePressed = True
-                else:
-                    SpacePressed = False
-                    moving = False
-                # Causes our character to fall
-                gravity = gravity + 1
-                sprite3rect.y = sprite3rect.y + gravity
-                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                
             if gameState == "Dark Knight Play GIS":
                 floor = 157
-                sprite_speed = 1
-                if sprite3rect.y > floor:
-                    gravity = 0
-                    sprite3rect.y = floor
-                # Making our sprite jump
-                if SpacePressed == True and sprite3rect.y >= floor:
-                    gravity = -12
+                sprite_speed = 2
                 if sprite3rect.colliderect(Doorrect):
                     gameState = "Dark Knight Playing"
                     continue
@@ -539,15 +508,15 @@ while True:
         SpacePressed = False
         moving = False
     # Causes our character to fall
-    gravity = gravity + 1
-    sprite3rect.y = sprite3rect.y + gravity
+    gravitysprite3 = gravitysprite3 + 1
+    sprite3rect.y = sprite3rect.y + gravitysprite3
     # Stops our sprite from falling when it hits the coordinates that we chose for the floor
     if sprite3rect.y > floor:
-        gravity = 0
+        gravitysprite3 = 0
         sprite3rect.y = floor
     # Making our sprite jump
     if SpacePressed == True and sprite3rect.y >= floor:
-        gravity = -12
+        gravitysprite3 = -12
         continue
     
     moving = True
@@ -563,15 +532,15 @@ while True:
         SpacePressed = False
         moving = False
     # Causes our character to fall
-    gravity = gravity + 1
-    sprite2rect.y = sprite2rect.y + gravity
+    gravitysprite2 = gravitysprite2 + 1
+    sprite2rect.y = sprite2rect.y + gravitysprite2
     # Stops our sprite from falling when it hits the coordinates that we chose for the floor
     if sprite2rect.y > floor:
-        gravity = 0
+        gravitysprite2 = 0
         sprite2rect.y = floor
     # Making our sprite jump
     if SpacePressed == True and sprite2rect.y >= floor:
-        gravity = -12
+        gravitysprite2 = -12
         continue
     
     moving = True
@@ -587,15 +556,15 @@ while True:
         SpacePressed = False
         moving = False
     # Causes our character to fall
-    gravity = gravity + 1
-    sprite1rect.y = sprite1rect.y + gravity
+    gravitysprite1 = gravitysprite1 + 1
+    sprite1rect.y = sprite1rect.y + gravitysprite1
     # Stops our sprite from falling when it hits the coordinates that we chose for the floor
     if sprite1rect.y > floor:
-        gravity = 0
+        gravitysprite1 = 0
         sprite1rect.y = floor
     # Making our sprite jump
     if SpacePressed == True and sprite1rect.y >= floor:
-        gravity = -12
+        gravitysprite1 = -12
         continue
         
     # Running Animation logic for Knight1
@@ -805,12 +774,17 @@ while True:
         if frame > 30:
             frame = 0
     
-    #Drawing the time string on the screen of the given gamestates
+
     if gameState == "Axe Warrior Playing" or gameState == "Brave Knight Playing" or gameState == "Dark Knight Playing":
-        # Draw the timer
+        #Drawing the time string on the screen according to the given gamestates
         timer_font = pygame.font.Font(None, 36)
         timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
         mainwindow.blit(timer_text, (10, 10))
+        
+        # Drawing the hearts
+        mainwindow.blit(Heart1, (400,0))
+        mainwindow.blit(Heart2, (425,0))
+        mainwindow.blit(Heart3, (450,0))
         
         # Update and draw projectiles in the following gamestates
         projectile_group.update()
@@ -824,7 +798,29 @@ while True:
         frog_enemy_group.update()
         frog_enemy_group.draw(mainwindow)
         
-
+    if gameState == "Axe Warrior Play GIS" or gameState == "Brave Knight Play GIS" or gameState == "Dark Knight Play GIS":
+        mainwindow.blit(Wizard, (400,167))
+        mainwindow.blit(SpeechBubble, (280,40))
+        
+        # Drawing the wizards text within the speech bubble
+        line1 = font5.render("Retrieve the", 1, pygame.Color("black"))
+        mainwindow.blit(line1, (295, 70))
+        line2 = font5.render("magical gem to", 1, pygame.Color("black"))
+        mainwindow.blit(line2, (290, 85))
+        line3 = font5.render("save our nation", 1, pygame.Color("black"))
+        mainwindow.blit(line3, (290, 100))
+        line4 = font5.render("young hero!", 1, pygame.Color("black"))
+        mainwindow.blit(line4, (310, 115))
+        
+        # Play the game over sound effect only once
+        if not MonsterRoarPlayed:
+            MonsterRoar.play()
+            MonsterRoarPlayed = True
+            
+            # Shake the intro screen
+            shake_mainwindow(GameIntroScreenbg, 9000, 5)  # Shake for 11000 milliseconds with a magnitude of 5
+        
+        
     # *********DRAW THE FRAME**********
     pygame.display.flip()
     clock.tick(FPS)  # Force frame rate to 60fps or lower
