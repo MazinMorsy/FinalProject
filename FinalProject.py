@@ -13,8 +13,6 @@ gravitysprite1 = 0
 gravitysprite2 = 0
 gravitysprite3 = 0
 
-
-
 FPS = 60
 current_time = 0  # Initialize the timer variable
 clock = pygame.time.Clock()  # Create a clock object
@@ -107,11 +105,11 @@ sprite2Display = pygame.image.load("Knight2.png")
 sprite3Display = pygame.image.load("Knight3.png")
 
 # Idle Animations
-Idle1Knight1 = pygame.image.load("Idle animation1 knight1.png")
-Idle2Knight1 = pygame.image.load("Idle animation2 knight1.png")
-Idle3Knight1 = pygame.image.load("Idle animation3 knight1.png")
-Idle4Knight1 = pygame.image.load("Idle animation4 knight1.png")
-Idle5Knight1 = pygame.image.load("Idle animation5 knight1.png")
+Idle1Knight1 = pygame.image.load("Idle Animation1 Knight1.png")
+Idle2Knight1 = pygame.image.load("Idle Animation2 Knight1.png")
+Idle3Knight1 = pygame.image.load("Idle Animation3 Knight1.png")
+Idle4Knight1 = pygame.image.load("Idle Animation4 Knight1.png")
+Idle5Knight1 = pygame.image.load("Idle Animation5 Knight1.png")
 
 Idle1Knight2 = pygame.image.load("Idle Animation1 Knight2.png")
 Idle2Knight2 = pygame.image.load("Idle Animation2 Knight2.png")
@@ -136,23 +134,23 @@ Running6Knight1 = pygame.image.load("Running Animation6 Knight1.png")
 Running7Knight1 = pygame.image.load("Running Animation7 Knight1.png")
 Running8Knight1 = pygame.image.load("Running Animation8 Knight1.png")
 
-Running1Knight2 = pygame.image.load("Knight2RunningAnimation1.png")
-Running2Knight2 = pygame.image.load("Knight2RunningAnimation2.png")
-Running3Knight2 = pygame.image.load("Knight2RunningAnimation3.png")
-Running4Knight2 = pygame.image.load("Knight2RunningAnimation4.png")
-Running5Knight2 = pygame.image.load("Knight2RunningAnimation5.png")
-Running6Knight2 = pygame.image.load("Knight2RunningAnimation6.png")
-Running7Knight2 = pygame.image.load("Knight2RunningAnimation7.png")
-Running8Knight2 = pygame.image.load("Knight2RunningAnimation8.png")
+Running1Knight2 = pygame.image.load("Running Animation1 Knight2.png")
+Running2Knight2 = pygame.image.load("Running Animation2 Knight2.png")
+Running3Knight2 = pygame.image.load("Running Animation3 Knight2.png")
+Running4Knight2 = pygame.image.load("Running Animation4 Knight2.png")
+Running5Knight2 = pygame.image.load("Running Animation5 Knight2.png")
+Running6Knight2 = pygame.image.load("Running Animation6 Knight2.png")
+Running7Knight2 = pygame.image.load("Running Animation7 Knight2.png")
+Running8Knight2 = pygame.image.load("Running Animation8 Knight2.png")
 
-Running1Knight3 = pygame.image.load("RunningAnimation1Knight3.png")
-Running2Knight3 = pygame.image.load("RunningAnimation2Knight3.png")
-Running3Knight3 = pygame.image.load("RunningAnimation3Knight3.png")
-Running4Knight3 = pygame.image.load("RunningAnimation4Knight3.png")
-Running5Knight3 = pygame.image.load("RunningAnimation5Knight3.png")
-Running6Knight3 = pygame.image.load("RunningAnimation6Knight3.png")
-Running7Knight3 = pygame.image.load("RunningAnimation7Knight3.png")
-Running8Knight3 = pygame.image.load("RunningAnimation8Knight3.png")
+Running1Knight3 = pygame.image.load("Running Animation1 Knight3.png")
+Running2Knight3 = pygame.image.load("Running Animation2 Knight3.png")
+Running3Knight3 = pygame.image.load("Running Animation3 Knight3.png")
+Running4Knight3 = pygame.image.load("Running Animation4 Knight3.png")
+Running5Knight3 = pygame.image.load("Running Animation5 Knight3.png")
+Running6Knight3 = pygame.image.load("Running Animation6 Knight3.png")
+Running7Knight3 = pygame.image.load("Running Animation7 Knight3.png")
+Running8Knight3 = pygame.image.load("Running Animation8 Knight3.png")
 
 
 # Slash Attack Animations for our characters
@@ -225,16 +223,32 @@ class FrogEnemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 3  # Set the frog enemy speed
+        self.speed = 1  # Set the frog enemy speed
 
-    def update(self):
-        self.rect.x -= self.speed  # Move frog enemy towards the left
+    def update(self, target_x, target_y):
+        if self.rect.x < target_x:
+            self.rect.x += self.speed
+        elif self.rect.x > target_x:
+            self.rect.x -= self.speed
+
+        if self.rect.y < target_y:
+            self.rect.y += self.speed
+        elif self.rect.y > target_y:
+            self.rect.y -= self.speed
 
         # Update frog enemy animation
         self.index += 1
         if self.index >= len(self.running_images):
             self.index = 0
         self.image = self.running_images[self.index]
+
+# FrogEnemy group
+frog_enemy_group = pygame.sprite.Group()
+
+
+# Set up a timer for frog enemy spawning
+spawn_timer = 0
+spawn_interval = random.randint(200, 500)  # Initial spawn interval
         
 # Shaking window function        
 def shake_mainwindow(surface, duration, magnitude):
@@ -409,6 +423,8 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image,(0,0))
             mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+            # Update frog enemy position based on the position of our character character
+            frog_enemy_group.update(sprite1rect.x, sprite1rect.y)
 
             
     elif gameState == "Brave Knight Playing":
@@ -416,12 +432,16 @@ while True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+            # Update frog enemy position based on the position of our character character
+            frog_enemy_group.update(sprite2rect.x, sprite2rect.y)
             
     elif gameState == "Dark Knight Playing":
         if mousePressed == True:
             # Drawing the background for the menu window
             mainwindow.blit(mainbackground_image, (0, 0))
             mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+            # Update frog enemy position based on the position of our character character
+            frog_enemy_group.update(sprite3rect.x, sprite3rect.y)
 
             
     elif gameState == "Game Over You Lost":
@@ -754,9 +774,17 @@ while True:
             new_frog_enemy = FrogEnemy(windowWidth, floor)
             frog_enemy_group.add(new_frog_enemy)
                 
-        # Update and draw frog enemies
-        frog_enemy_group.update()
         frog_enemy_group.draw(mainwindow)
+        
+        # Check if it's time to spawn a new frog enemy
+        spawn_timer += 1
+        if spawn_timer >= spawn_interval:
+            spawn_timer = 0
+            spawn_interval = random.randint(10000, 12000)  # Reset spawn interval
+
+        # Spawn a new frog enemy at a random position
+        new_frog_enemy = FrogEnemy(random.randint(0, windowWidth), random.randint(0, windowHeight))
+        frog_enemy_group.add(new_frog_enemy)
         
         # Update the timer
         current_time += clock.get_rawtime() / 1000
