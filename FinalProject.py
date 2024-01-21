@@ -223,7 +223,7 @@ class FrogEnemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 1  # Set the frog enemy speed
+        self.speed = 2  # Set the frog enemy speed
 
     def update(self, target_x, target_y):
         if self.rect.x < target_x:
@@ -405,7 +405,7 @@ while True:
             mainwindow.blit(line1, (10, 70))
             line2 = font1.render("2. Press 'SPACE' to jump.", 1, pygame.Color("white"))
             mainwindow.blit(line2, (10, 110))
-            line3 = font1.render("3. Press 'r' to shoot projectiles. ", 1, pygame.Color("white"))
+            line3 = font1.render("3. Press the mouse to shoot projectiles. ", 1, pygame.Color("white"))
             mainwindow.blit(line3, (10, 150))
             line4 = font1.render("4. Retrieve The magical gem to save the Kingdom.).", 1, pygame.Color("white"))
             mainwindow.blit(line4, (10, 190))
