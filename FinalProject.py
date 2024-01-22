@@ -27,7 +27,7 @@ music_paused = False
 music_button_pressed = False
 
 sprite_speed = 3
-gameState = "IntroScreen"
+gameState = "You Won"
 
 sprite1Display = pygame.image.load("Knight1.png")
 
@@ -77,6 +77,10 @@ GameIntroScreenbg = pygame.image.load("GameIntroScreen.png")
 # Instructions window bg
 InstructionsWindowbg = pygame.image.load("starrysky.png")
 
+#Capturing Gem bg dimensions and background
+CaptureGemwindow = pygame.display.set_mode((windowWidth, windowHeight))
+CaptureGembg = pygame.image.load("CaptureGembg.jpg")
+
 # Initial appearance of all our characters
 sprite1 = pygame.image.load("Knight1.png")
 sprite1rect = sprite1.get_rect()  # Returns information about our sprite1
@@ -98,6 +102,9 @@ Heart3 = pygame.image.load("Heart3.png")
 
 Door = pygame.image.load("Door.png")
 Doorrect = Door.get_rect()
+
+Ruby = pygame.image.load("Ruby.png")
+Chest = pygame.image.load("Chest.png")
 
 # Choosing Characters Pictures
 sprite1Display = pygame.image.load("Knight1.png")
@@ -442,12 +449,24 @@ while True:
             mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
             # Update frog enemy position based on the position of our character character
             frog_enemy_group.update(sprite3rect.x, sprite3rect.y)
+    
+    elif gameState == "Axe Warrior Capturing":
+        if mousePressed == True:
+            mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
 
+    elif gameState == "Brave Knight Capturing":
+        if mousePressed == True:
+            mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+
+    elif gameState == "Dark Knight Capturing":
+        if mousePressed == True:
+            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+            
             
     elif gameState == "Game Over You Lost":
         # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
-        if mouseX > 180 and mouseX < 380 and mouseY > 200 and mouseY < 200:
-            gameState = "menu"
+        if mouseX > 180 and mouseX < 380 and mouseY > 150 and mouseY < 200:
+            gameState = "IntroScreen"
             print(gameState)
         elif mouseX > 180 and mouseX < 325 and mouseY > 200 and mouseY < 270:
             pygame.quit()
@@ -468,6 +487,30 @@ while True:
         word4 = "Over"
         renderedText = font3.render(word4, 1, pygame.Color("Black"))
         Introwindow.blit(renderedText, (300,50))
+        
+    elif gameState == "You Won":
+        # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
+        if mouseX > 180 and mouseX < 380 and mouseY > 150 and mouseY < 200:
+            gameState = "IntroScreen"
+            print(gameState)
+        elif mouseX > 180 and mouseX < 325 and mouseY > 200 and mouseY < 270:
+            pygame.quit()
+
+        Introwindow.fill((0,128,0))
+            
+        pygame.draw.rect(Introwindow, pygame.Color("White"), (180, 150, 200, 50)) # The Box
+        instrText = font4.render("Play Again", 1, "black")
+        Introwindow.blit(instrText, (200, 145 )) # The Text
+        # Drawing the play button with text
+        pygame.draw.rect(Introwindow, pygame.Color("White"), (180, 220, 200, 50)) # The Box
+        playText = font4.render("Quit", 1, "black")
+        Introwindow.blit(playText, (243, 220)) # The Text
+            
+        word5 = "You Won"
+        renderedText = font3.render(word5, 1, pygame.Color("Black"))
+        Introwindow.blit(renderedText, (130,30))
+
+    
 
     # *********GAME LOGIC**********
     # Setting our keybinds to see if a specific key is pressed to subtract or add to the Sprites x and y coordinates
@@ -758,6 +801,15 @@ while True:
         timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
         mainwindow.blit(timer_text, (10, 10))
         
+        mainwindow.blit(Door, (0,168))
+        Doorrect = pygame.Rect(0,168, doorsrectwidth,doorsrectheight )
+        if sprite1rect.colliderect(Doorrect):
+            gameState = "Axe Warrior Capturing"
+        if sprite2rect.colliderect(Doorrect):
+            gameState = "Brave Knight Capturing"
+        if sprite3rect.colliderect(Doorrect):
+            gameState = "Dark Knight Capturing"
+        
         # Drawing the hearts
         mainwindow.blit(Heart1, (400,0))
         mainwindow.blit(Heart2, (425,0))
@@ -856,6 +908,14 @@ while True:
             
             # Shake the intro screen
             shake_mainwindow(GameIntroScreenbg, 9000, 10)  # Shake for 9000 milliseconds with a magnitude of 10
+            
+            
+    if gameState == "Axe Warrior Capturing" or gameState == "Brave Knight Capturing" or gameState == "Dark Knight Capturing":
+        # Drawing the background for the menu window
+        mainwindow.blit(CaptureGembg, (0, 0))
+        mainwindow.blit(Chest, (400, 50))
+        mainwindow.blit(Ruby, (400, 50))
+
         
     # *********DRAW THE FRAME**********
     pygame.display.flip()
