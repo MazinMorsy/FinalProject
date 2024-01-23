@@ -420,7 +420,7 @@ while True:
             mainwindow.blit(line2, (10, 110))
             line3 = font1.render("3. Press the mouse to shoot projectiles. ", 1, pygame.Color("white"))
             mainwindow.blit(line3, (10, 150))
-            line4 = font1.render("4. Retrieve The magical gem to save the Kingdom.).", 1, pygame.Color("white"))
+            line4 = font1.render("4. Retrieve The magical gem to save the Kingdom.", 1, pygame.Color("white"))
             mainwindow.blit(line4, (10, 190))
             line5 = font1.render("Good Luck!", 1, pygame.Color("white"))
             mainwindow.blit(line5, (10, 230))
@@ -455,18 +455,6 @@ while True:
             mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
             # Update frog enemy position based on the position of our character character
             frog_enemy_group.update(sprite3rect.x, sprite3rect.y)
-    
-    elif gameState == "Axe Warrior Capturing":
-        if mousePressed == True:
-            mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
-
-    elif gameState == "Brave Knight Capturing":
-        if mousePressed == True:
-            mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
-
-    elif gameState == "Dark Knight Capturing":
-        if mousePressed == True:
-            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
             
             
     elif gameState == "Game Over You Lost":
@@ -914,15 +902,56 @@ while True:
             
             # Shake the intro screen
             shake_mainwindow(GameIntroScreenbg, 9000, 10)  # Shake for 9000 milliseconds with a magnitude of 10
-            
-            
+
+        
     if gameState == "Axe Warrior Capturing" or gameState == "Brave Knight Capturing" or gameState == "Dark Knight Capturing":
         # Drawing the background for the menu window
         mainwindow.blit(CaptureGembg, (0, 0))
-        mainwindow.blit(sprite1, sprite1rect.topleft)
         mainwindow.blit(Chest, (490, 230))
         mainwindow.blit(Ruby, (495, 225))
+        print("succesful basic bg elements blitted")
         
+        if gameState == "Axe Warrior Capturing":
+            if mousePressed == True:
+                mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+                print("Sprite1 capturing")
+                if gameState == "Axe Warrior Capturing":
+                    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                    floor = 200
+                    sprite_speed = 2
+                    if sprite1rect.y > floor:
+                        sprite1rect.y = floor
+                    # Making our sprite jump
+                    if SpacePressed == True and sprite1rect.y >= floor:
+                        gravitysprite1 = -12
+                    if sprite1rect.colliderect(Rubyrect):
+                        gameState = "You Won"
+                        continue
+               
+        elif gameState == "Brave Knight Capturing":
+            if mousePressed == True:
+                mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+                print("Sprite2 capturing")
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                if gameState == "Brave Knight Capturing":
+                    floor = 157
+                    sprite_speed = 2
+                    if sprite2rect.colliderect(Rubyrect):
+                        gameState = "You Won"
+                        continue
+                    
+        elif gameState == "Dark Knight Capturing":
+            if mousePressed == True:
+                mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+                print("Sprite3 capturing")
+                
+                if gameState == "Dark Knight Capturing":
+                    floor = 157
+                    sprite_speed = 2
+                    if sprite3rect.colliderect(Rubyrect):
+                        gameState = "You Won"
+                        continue
+
         if sprite1rect.colliderect(Rubyrect):
             gameState = "You Won"
         if sprite2rect.colliderect(Rubyrect):
