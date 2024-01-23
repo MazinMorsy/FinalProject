@@ -27,7 +27,8 @@ music_paused = False
 music_button_pressed = False
 
 sprite_speed = 3
-gameState = "You Won"
+gameState = "IntroScreen"
+
 
 sprite1Display = pygame.image.load("Knight1.png")
 
@@ -103,7 +104,12 @@ Heart3 = pygame.image.load("Heart3.png")
 Door = pygame.image.load("Door.png")
 Doorrect = Door.get_rect()
 
+Rubyrectwidth = 20
+Rubyrectheight = 23
+Rubyrect = pygame.Rect(502,236, Rubyrectwidth,Rubyrectheight )
 Ruby = pygame.image.load("Ruby.png")
+Rubyrect = Ruby.get_rect()
+
 Chest = pygame.image.load("Chest.png")
 
 # Choosing Characters Pictures
@@ -913,8 +919,16 @@ while True:
     if gameState == "Axe Warrior Capturing" or gameState == "Brave Knight Capturing" or gameState == "Dark Knight Capturing":
         # Drawing the background for the menu window
         mainwindow.blit(CaptureGembg, (0, 0))
-        mainwindow.blit(Chest, (400, 50))
-        mainwindow.blit(Ruby, (400, 50))
+        mainwindow.blit(sprite1, sprite1rect.topleft)
+        mainwindow.blit(Chest, (490, 230))
+        mainwindow.blit(Ruby, (495, 225))
+        
+        if sprite1rect.colliderect(Rubyrect):
+            gameState = "You Won"
+        if sprite2rect.colliderect(Rubyrect):
+            gameState = "You Won"
+        if sprite3rect.colliderect(Rubyrect):
+            gameState = "You Won"
 
         
     # *********DRAW THE FRAME**********
