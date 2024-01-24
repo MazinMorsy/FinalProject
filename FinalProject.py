@@ -542,7 +542,6 @@ while True:
         mainwindow.blit(Heart2, (425,0))
         mainwindow.blit(Heart3, (450,0))
         frog_enemy_group.draw(mainwindow)
-        mainwindow.blit(frog1, (200,200))
 
         if gameState == "Axe Warrior Playing":
             if mousePressed == True:
