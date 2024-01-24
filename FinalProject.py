@@ -45,6 +45,10 @@ doorsrectwidth = 44
 doorsrectheight = 64
 Doorrect = pygame.Rect(485,110, doorsrectwidth,doorsrectheight )
 
+Portalrectwidth = 44
+Portalrectheight = 84
+Portalrect = pygame.Rect(400,168, Portalrectwidth,Portalrectheight )
+
 # Initial position of sprite1Display
 x_position_display1 = 0
 y_position_display1 = 85
@@ -104,11 +108,12 @@ Heart3 = pygame.image.load("Heart3.png")
 Door = pygame.image.load("Door.png")
 Doorrect = Door.get_rect()
 
-Rubyrectwidth = 20
-Rubyrectheight = 23
-Rubyrect = pygame.Rect(502,236, Rubyrectwidth,Rubyrectheight )
+Portal = pygame.image.load("Portal.png")
+Portalrect = Portal.get_rect()
+
 Ruby = pygame.image.load("Ruby.png")
-Rubyrect = Ruby.get_rect()
+Rubyrect = Ruby.get_rect(topleft=(506, floor))
+
 
 Chest = pygame.image.load("Chest.png")
 
@@ -203,6 +208,7 @@ pygame.mixer.music.load("DungeonMusic.mp3")
 pygame.mixer.music.set_volume(1.0)
 pygame.mixer.music.play(-1) # The value -1 keeps it so it loops the bg music forever
 
+# Our classes
 
 # Projectile class
 class Projectile(pygame.sprite.Sprite):
@@ -261,7 +267,9 @@ frog_enemy_group = pygame.sprite.Group()
 
 # Set up a timer for frog enemy spawning
 spawn_timer = 0
-spawn_interval = random.randint(200, 500)  # Initial spawn interval
+spawn_interval = random.randint(500, 700)  # Initial spawn interval
+max_frog_enemies = 15  # Adjust this value based on how many frog enemies you want
+
         
 # Shaking window function        
 def shake_mainwindow(surface, duration, magnitude):
@@ -328,7 +336,6 @@ while True:
         # Perform any actions you want when an enemy is hit, such as playing a sound, updating score, etc.
         pass
             
-
     # Game States if statements            
     if gameState == "IntroScreen":
         if mousePressed == True:
@@ -430,33 +437,214 @@ while True:
             menuText = font1.render("Menu", 1, "white")
             mainwindow.blit(menuText, (417, 128)) # The Text
             
-                
-    elif gameState == "Axe Warrior Playing":
-        if mousePressed == True:
-            # Drawing the background for the menu window
-            mainwindow.blit(mainbackground_image,(0,0))
-            mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
-            # Update frog enemy position based on the position of our character character
-            frog_enemy_group.update(sprite1rect.x, sprite1rect.y)
+                    
+    elif gameState == "Axe Warrior Play GIS" or gameState == "Brave Knight Play GIS" or gameState == "Dark Knight Play GIS":
+        
+        # Drawing the background for the menu window
+        mainwindow.blit(GameIntroScreenbg, (0, 0))
+        mainwindow.blit(Wizard, (400,167))
+        mainwindow.blit(SpeechBubble, (280,40))
+        mainwindow.blit(Door, (500,138))
+        Doorrect = pygame.Rect(515,110, doorsrectwidth,doorsrectheight )
 
+        # Drawing the wizards text within the speech bubble
+        line1 = font5.render("Retrieve the", 1, pygame.Color("black"))
+        mainwindow.blit(line1, (295, 70))
+        line2 = font5.render("magical gem to", 1, pygame.Color("black"))
+        mainwindow.blit(line2, (290, 85))
+        line3 = font5.render("save our nation", 1, pygame.Color("black"))
+        mainwindow.blit(line3, (285, 100))
+        line4 = font5.render("young hero!", 1, pygame.Color("black"))
+        mainwindow.blit(line4, (310, 115))
+        
+        if gameState == "Axe Warrior Play GIS":
+            if mousePressed == True:
+                mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+
+                
+                if gameState == "Axe Warrior Play GIS":
+                    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                    floor = 150
+                    sprite_speed = 2
+                    if sprite1rect.y > floor:
+                        sprite1rect.y = floor
+                    # Making our sprite jump
+                    if SpacePressed == True and sprite1rect.y >= floor:
+                        gravitysprite1 = -12
+                    if sprite1rect.colliderect(Doorrect):
+                        gameState = "Axe Warrior Playing"
+               
+        elif gameState == "Brave Knight Play GIS":
+            if mousePressed == True:
+                mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                if gameState == "Brave Knight Play GIS":
+                    floor = 157
+                    sprite_speed = 2
+                    if sprite2rect.colliderect(Doorrect):
+                        gameState = "Brave Knight Playing"
+                        
+                    
+        elif gameState == "Dark Knight Play GIS":
+            if mousePressed == True:
+                mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+                
+                if gameState == "Dark Knight Play GIS":
+                    floor = 157
+                    sprite_speed = 2
+                    if sprite3rect.colliderect(Doorrect):
+                        gameState = "Dark Knight Playing"
+                
+        # Play the game over sound effect only once
+        if not MonsterRoarPlayed:
+            MonsterRoar.play()
+            MonsterRoarPlayed = True
             
-    elif gameState == "Brave Knight Playing":
-        if mousePressed == True:
-            # Drawing the background for the menu window
-            mainwindow.blit(mainbackground_image, (0, 0))
-            mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
-            # Update frog enemy position based on the position of our character character
-            frog_enemy_group.update(sprite2rect.x, sprite2rect.y)
+            # Shake the intro screen
+            shake_mainwindow(GameIntroScreenbg, 9000, 10)  # Shake for 9000 milliseconds with a magnitude of 10
             
-    elif gameState == "Dark Knight Playing":
-        if mousePressed == True:
-            # Drawing the background for the menu window
-            mainwindow.blit(mainbackground_image, (0, 0))
-            mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
-            # Update frog enemy position based on the position of our character character
-            frog_enemy_group.update(sprite3rect.x, sprite3rect.y)
+    
+    elif gameState == "Axe Warrior Playing" or gameState == "Brave Knight Playing" or gameState == "Dark Knight Playing":
+        
+        mainwindow.blit(mainbackground_image,(0,0))
+        #Drawing the time string on the screen according to the given gamestates
+        timer_font = pygame.font.Font(None, 36)
+        timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
+        mainwindow.blit(timer_text, (10, 10))
+        
+        mainwindow.blit(Portal, (10,168))
+        Portalrect = pygame.Rect(-20,168, Portalrectwidth,Portalrectheight )
+        
+        # Drawing the hearts
+        mainwindow.blit(Heart1, (400,0))
+        mainwindow.blit(Heart2, (425,0))
+        mainwindow.blit(Heart3, (450,0))
+        
+        if gameState == "Axe Warrior Playing":
+            if mousePressed == True:
+                mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
+                frog_enemy_group.update(sprite1rect.x, sprite1rect.y)
+
+                
+                if gameState == "Axe Warrior Playing":
+                    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                    floor = 190
+                    sprite_speed = 3
+                    if sprite1rect.y > floor:
+                        sprite1rect.y = floor
+                    # Making our sprite jump
+                    if SpacePressed == True and sprite1rect.y >= floor:
+                        gravitysprite1 = -12
+                    if sprite1rect.colliderect(Portalrect):
+                        gameState = "Axe Warrior Capturing"
+               
+        elif gameState == "Brave Knight Playing":
+            if mousePressed == True:
+                mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
+                frog_enemy_group.update(sprite2rect.x, sprite2rect.y)
+
+                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
+                if gameState == "Brave Knight Playing":
+                    floor = 190
+                    sprite_speed = 3
+                    if sprite2rect.colliderect(Portalrect):
+                        print("Brave Knight collided with Portal")
+                        gameState = "Brave Knight Capturing"
+                    
+        elif gameState == "Dark Knight Playing":
+            if mousePressed == True:
+                mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
+                frog_enemy_group.update(sprite3rect.x, sprite3rect.y)
+                
+                if gameState == "Dark Knight Playing":
+                    floor = 190
+                    sprite_speed = 3
+                    if sprite3rect.colliderect(Portalrect):
+                        gameState = "Dark Knight Capturing"
+        
+        # Update and draw projectiles in the following gamestates
+        projectile_group.update()
+        projectile_group.draw(mainwindow)  # Draw s on the game window
+        # Create frog enemy at the right edge of the screen
+        if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
+            new_frog_enemy = FrogEnemy(windowWidth, floor)
+            frog_enemy_group.add(new_frog_enemy)
+                
+        frog_enemy_group.draw(mainwindow)
+        
+        if spawn_timer >= spawn_interval and len(frog_enemy_group) < max_frog_enemies:
+            spawn_timer = 0
+            spawn_interval = random.randint(2000, 5000)  # Reset spawn interval
             
-            
+            # Update and draw projectiles and frog enemies
+            projectile_group.update()
+            projectile_group.draw(mainwindow)
+
+        # Spawn a new frog enemy at a random position
+        new_frog_enemy = FrogEnemy(random.randint(0, windowWidth), random.randint(0, windowHeight))
+        frog_enemy_group.add(new_frog_enemy)
+        
+        # Update the timer
+        current_time += clock.get_rawtime() / 1000
+    
+    elif gameState == "Axe Warrior Capturing" or gameState == "Brave Knight Capturing" or gameState == "Dark Knight Capturing":
+        # Drawing the background for the menu window
+        mainwindow.blit(CaptureGembg, (0, 0))
+        mainwindow.blit(Chest, (490, 230))
+        mainwindow.blit(Ruby, (495, 225))
+        print(f"Mouse Position: ({mouseX}, {mouseY})")
+
+        
+        if gameState == "Axe Warrior Capturing":
+            if mousePressed:
+                mainwindow.blit(sprite1, sprite1rect.topleft)
+
+                # Update sprite1 position
+                sprite1rect.y += gravitysprite1
+                gravitysprite1 += 0.5
+
+                # Stop sprite from falling below the floor
+                if sprite1rect.y > floor:
+                    sprite1rect.y = floor
+
+                # Check for collision with Rubyrect
+                if sprite1rect.colliderect(Rubyrect):
+                    gameState = "You Won"
+
+        elif gameState == "Brave Knight Capturing":
+            if mousePressed:
+                mainwindow.blit(sprite2, sprite2rect.topleft)
+
+                # Update sprite2 position
+                sprite2rect.y += gravitysprite2
+                gravitysprite2 += 0.5
+
+                # Stop sprite from falling below the floor
+                if sprite2rect.y > floor:
+                    sprite2rect.y = floor
+
+                # Check for collision with Rubyrect
+                if sprite2rect.colliderect(Rubyrect):
+                    gameState = "You Won"
+
+        elif gameState == "Dark Knight Capturing":
+            if mousePressed:
+                mainwindow.blit(sprite3, sprite3rect.topleft)
+
+                # Update sprite3 position
+                sprite3rect.y += gravitysprite3
+                gravitysprite3 += 0.5
+
+                # Stop sprite from falling below the floor
+                if sprite3rect.y > floor:
+                    sprite3rect.y = floor
+
+                # Check for collision with Rubyrect
+                if sprite3rect.colliderect(Rubyrect):
+                    gameState = "You Won"
+
+        
     elif gameState == "Game Over You Lost":
         # Checking if our boxes are pressed and if they are, switch the gamestate accordingly
         if mouseX > 180 and mouseX < 380 and mouseY > 150 and mouseY < 200:
@@ -504,7 +692,6 @@ while True:
         renderedText = font3.render(word5, 1, pygame.Color("Black"))
         Introwindow.blit(renderedText, (130,30))
 
-    
 
     # *********GAME LOGIC**********
     # Setting our keybinds to see if a specific key is pressed to subtract or add to the Sprites x and y coordinates
@@ -531,7 +718,6 @@ while True:
     # Making our sprite jump
     if SpacePressed == True and sprite3rect.y >= floor:
         gravitysprite3 = -12
-        continue
     
     moving = True
     key = pygame.key.get_pressed()
@@ -555,7 +741,6 @@ while True:
     # Making our sprite jump
     if SpacePressed == True and sprite2rect.y >= floor:
         gravitysprite2 = -12
-        continue
     
     moving = True
     key = pygame.key.get_pressed()
@@ -579,7 +764,6 @@ while True:
     # Making our sprite jump
     if SpacePressed == True and sprite1rect.y >= floor:
         gravitysprite1 = -12
-        continue
         
     # Running Animation logic for Knight1
     frame = frame + 1
@@ -787,178 +971,6 @@ while True:
                 frame = 0
         if frame > 30:
             frame = 0
-    
-
-    if gameState == "Axe Warrior Playing" or gameState == "Brave Knight Playing" or gameState == "Dark Knight Playing":
-        #Drawing the time string on the screen according to the given gamestates
-        timer_font = pygame.font.Font(None, 36)
-        timer_text = timer_font.render(f"Time: {int(current_time)}s", True, (255, 255, 255))
-        mainwindow.blit(timer_text, (10, 10))
-        
-        mainwindow.blit(Door, (0,168))
-        Doorrect = pygame.Rect(0,168, doorsrectwidth,doorsrectheight )
-        if sprite1rect.colliderect(Doorrect):
-            gameState = "Axe Warrior Capturing"
-        if sprite2rect.colliderect(Doorrect):
-            gameState = "Brave Knight Capturing"
-        if sprite3rect.colliderect(Doorrect):
-            gameState = "Dark Knight Capturing"
-        
-        # Drawing the hearts
-        mainwindow.blit(Heart1, (400,0))
-        mainwindow.blit(Heart2, (425,0))
-        mainwindow.blit(Heart3, (450,0))
-        
-        floor = 190
-        sprite_speed = 3
-        
-        # Update and draw projectiles in the following gamestates
-        projectile_group.update()
-        projectile_group.draw(mainwindow)  # Draw s on the game window
-        # Create frog enemy at the right edge of the screen
-        if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
-            new_frog_enemy = FrogEnemy(windowWidth, floor)
-            frog_enemy_group.add(new_frog_enemy)
-                
-        frog_enemy_group.draw(mainwindow)
-        
-        # Check if it's time to spawn a new frog enemy
-        spawn_timer += 1
-        if spawn_timer >= spawn_interval:
-            spawn_timer = 0
-            spawn_interval = random.randint(10000, 12000)  # Reset spawn interval
-
-        # Spawn a new frog enemy at a random position
-        new_frog_enemy = FrogEnemy(random.randint(0, windowWidth), random.randint(0, windowHeight))
-        frog_enemy_group.add(new_frog_enemy)
-        
-        # Update the timer
-        current_time += clock.get_rawtime() / 1000
-        
-    if gameState == "Axe Warrior Play GIS" or gameState == "Brave Knight Play GIS" or gameState == "Dark Knight Play GIS":
-        
-        # Drawing the background for the menu window
-        mainwindow.blit(GameIntroScreenbg, (0, 0))
-        mainwindow.blit(Wizard, (400,167))
-        mainwindow.blit(SpeechBubble, (280,40))
-        mainwindow.blit(Door, (500,138))
-        Doorrect = pygame.Rect(515,110, doorsrectwidth,doorsrectheight )
-
-        # Drawing the wizards text within the speech bubble
-        line1 = font5.render("Retrieve the", 1, pygame.Color("black"))
-        mainwindow.blit(line1, (295, 70))
-        line2 = font5.render("magical gem to", 1, pygame.Color("black"))
-        mainwindow.blit(line2, (290, 85))
-        line3 = font5.render("save our nation", 1, pygame.Color("black"))
-        mainwindow.blit(line3, (285, 100))
-        line4 = font5.render("young hero!", 1, pygame.Color("black"))
-        mainwindow.blit(line4, (310, 115))
-        
-        if gameState == "Axe Warrior Play GIS":
-            if mousePressed == True:
-                mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
-
-                
-                if gameState == "Axe Warrior Play GIS":
-                    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-                    floor = 150
-                    sprite_speed = 2
-                    if sprite1rect.y > floor:
-                        sprite1rect.y = floor
-                    # Making our sprite jump
-                    if SpacePressed == True and sprite1rect.y >= floor:
-                        gravitysprite1 = -12
-                    if sprite1rect.colliderect(Doorrect):
-                        gameState = "Axe Warrior Playing"
-                        continue
-               
-        elif gameState == "Brave Knight Play GIS":
-            if mousePressed == True:
-                mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
-
-                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-                if gameState == "Brave Knight Play GIS":
-                    floor = 157
-                    sprite_speed = 2
-                    if sprite2rect.colliderect(Doorrect):
-                        gameState = "Brave Knight Playing"
-                        continue
-                    
-        elif gameState == "Dark Knight Play GIS":
-            if mousePressed == True:
-                mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
-                
-                if gameState == "Dark Knight Play GIS":
-                    floor = 157
-                    sprite_speed = 2
-                    if sprite3rect.colliderect(Doorrect):
-                        gameState = "Dark Knight Playing"
-                        continue
-                
-        # Play the game over sound effect only once
-        if not MonsterRoarPlayed:
-            MonsterRoar.play()
-            MonsterRoarPlayed = True
-            
-            # Shake the intro screen
-            shake_mainwindow(GameIntroScreenbg, 9000, 10)  # Shake for 9000 milliseconds with a magnitude of 10
-
-        
-    if gameState == "Axe Warrior Capturing" or gameState == "Brave Knight Capturing" or gameState == "Dark Knight Capturing":
-        # Drawing the background for the menu window
-        mainwindow.blit(CaptureGembg, (0, 0))
-        mainwindow.blit(Chest, (490, 230))
-        mainwindow.blit(Ruby, (495, 225))
-        print("succesful basic bg elements blitted")
-        
-        if gameState == "Axe Warrior Capturing":
-            if mousePressed == True:
-                mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
-                print("Sprite1 capturing")
-                if gameState == "Axe Warrior Capturing":
-                    # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-                    floor = 200
-                    sprite_speed = 2
-                    if sprite1rect.y > floor:
-                        sprite1rect.y = floor
-                    # Making our sprite jump
-                    if SpacePressed == True and sprite1rect.y >= floor:
-                        gravitysprite1 = -12
-                    if sprite1rect.colliderect(Rubyrect):
-                        gameState = "You Won"
-                        continue
-               
-        elif gameState == "Brave Knight Capturing":
-            if mousePressed == True:
-                mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
-                print("Sprite2 capturing")
-                # Stops our sprite from falling when it hits the coordinates that we chose for the floor
-                if gameState == "Brave Knight Capturing":
-                    floor = 157
-                    sprite_speed = 2
-                    if sprite2rect.colliderect(Rubyrect):
-                        gameState = "You Won"
-                        continue
-                    
-        elif gameState == "Dark Knight Capturing":
-            if mousePressed == True:
-                mainwindow.blit(sprite3, sprite3rect.topleft)  # Use topleft attribute for blit
-                print("Sprite3 capturing")
-                
-                if gameState == "Dark Knight Capturing":
-                    floor = 157
-                    sprite_speed = 2
-                    if sprite3rect.colliderect(Rubyrect):
-                        gameState = "You Won"
-                        continue
-
-        if sprite1rect.colliderect(Rubyrect):
-            gameState = "You Won"
-        if sprite2rect.colliderect(Rubyrect):
-            gameState = "You Won"
-        if sprite3rect.colliderect(Rubyrect):
-            gameState = "You Won"
-
         
     # *********DRAW THE FRAME**********
     pygame.display.flip()
