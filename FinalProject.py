@@ -248,7 +248,6 @@ class FrogEnemy(pygame.sprite.Sprite):
             pygame.image.load("FrogEnemyRun3.png"),
             # Add more frames as needed
         ]
-        print("Frog enemy initialized at:", x, y)
 
         self.index = 0 # starting frame of animation
         self.image = self.running_images[self.index] # set to the first frame of the running animation (self.running_images[0]).
@@ -257,8 +256,9 @@ class FrogEnemy(pygame.sprite.Sprite):
         self.rect.y = y # x and y are at edge of the right edge
         self.speed = 5  # Set the frog enemy speed
 
-    def update(self, target_x, target_y):
-        print("Updating frog enemy position")
+    def update(self, target_x, target_y): # Initializing class method update and giving it attributes
+        # Updating the frogs x position based on the our character
+        # Move to the right
         if self.rect.x < target_x:
             self.rect.x += self.speed
         elif self.rect.x > target_x:
@@ -295,7 +295,7 @@ def shake_mainwindow(surface, duration, magnitude):
     original_position = surface.get_rect().topleft
     while pygame.time.get_ticks() - start_time < duration:
         offset = (random.randint(-magnitude, magnitude), random.randint(-magnitude, magnitude))
-        # Update the main window with the back buffer
+        # The mainwindow is updated by blitting the surface with the effects above
         mainwindow.blit(surface, (original_position[0] + offset[0], original_position[1] + offset[1]))
         pygame.display.update()
 
@@ -595,7 +595,6 @@ while True:
                 
         # Drawing frog enemies
         frog_enemy_group.draw(mainwindow)
-        print("Drawing frog enemies")
 
                 
         # Update frog positions
@@ -664,7 +663,6 @@ while True:
         mainwindow.blit(CaptureGembg, (0, 0))
         mainwindow.blit(Chest, (490, 230))
         mainwindow.blit(Ruby, (495, 225))
-        print(f"Mouse Position: ({mouseX}, {mouseY})")
 
         
         if gameState == "Axe Warrior Capturing":
