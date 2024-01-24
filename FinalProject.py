@@ -8,39 +8,48 @@ pygame.init()
 windowWidth = 539
 windowHeight = 286
 
-frame = 0  # Not the FPS but the frame of our animation
+# Frame-related variables
+frame = 0
+FPS = 60
+current_time = 0
+clock = pygame.time.Clock()
+
+# Gravity variables for sprites
 gravitysprite1 = 0
 gravitysprite2 = 0
 gravitysprite3 = 0
 
-FPS = 60
-current_time = 0  # Initialize the timer variable
-clock = pygame.time.Clock()  # Create a clock object
-
+# Movement and mouse-related variables
 moving = False
 mousePressed = False
+mouseX, mouseY = pygame.mouse.get_pos()
 
+
+# Music state variables
 # variable to track the music state
 music_paused = False
-
 # variable to track the button state
 music_button_pressed = False
 
+# Sprite speed
 sprite_speed = 3
+
+
 gameState = "IntroScreen"
 
+SpacePressed = False  # Initialize SpacePressed variable
 
-sprite1Display = pygame.image.load("Knight1.png")
-
+# Character dimensions and floor position
 spritesRectwidth = 64
 spritesRectheight = 64
 floor = 185
 spriteSize = (64, 64)
-sprite_speed = 3
-SpacePressed = False  # Initialize SpacePressed variable
+
+#Sound effect
 MonsterRoar = pygame.mixer.Sound("TitanROAR.wav")
 MonsterRoarPlayed = False
 
+# Door and Portal dimensions
 doorsrectwidth = 44
 doorsrectheight = 64
 Doorrect = pygame.Rect(485,110, doorsrectwidth,doorsrectheight )
@@ -49,19 +58,16 @@ Portalrectwidth = 44
 Portalrectheight = 84
 Portalrect = pygame.Rect(400,168, Portalrectwidth,Portalrectheight )
 
-# Initial position of sprite1Display
+# Initial positions of our display characters
 x_position_display1 = 0
 y_position_display1 = 85
 
-# Initial position of sprite2Display
 x_position_display2 = 140
 y_position_display2 = 57
 
-# Initial position of sprite3Display
 x_position_display3 = 320
 y_position_display3 = 60
 
-mouseX, mouseY = pygame.mouse.get_pos() # Getting the position of our mouse
 
 #Intro Window dimensions and background
 Introwindow = pygame.display.set_mode((windowWidth, windowHeight))
@@ -86,7 +92,7 @@ InstructionsWindowbg = pygame.image.load("starrysky.png")
 CaptureGemwindow = pygame.display.set_mode((windowWidth, windowHeight))
 CaptureGembg = pygame.image.load("CaptureGembg.jpg")
 
-# Initial appearance of all our characters
+# Initial appearance of all our sprites
 sprite1 = pygame.image.load("Knight1.png")
 sprite1rect = sprite1.get_rect()  # Returns information about our sprite1
 sprite2 = pygame.image.load("Knight2.png")
@@ -104,6 +110,10 @@ FrogEnemyrect = FrogEnemy.get_rect() # Returns information about our FrogEnemy
 Heart1 = pygame.image.load("Heart1.png")
 Heart2 = pygame.image.load("Heart2.png")
 Heart3 = pygame.image.load("Heart3.png")
+
+# Set up hearts and heart images
+hearts = 3
+heart_images = [Heart1, Heart2, Heart3]
 
 Door = pygame.image.load("Door.png")
 Doorrect = Door.get_rect()
@@ -185,10 +195,7 @@ Knight3SlashAnimation2 = pygame.image.load("Knight3SlashAnimation2.png")
 Knight3SlashAnimation3 = pygame.image.load("Knight3SlashAnimation3.png")
 
 
-# Set up hearts and heart images
-hearts = 3
-heart_images = [Heart1, Heart2, Heart3]
-
+# Fonts
 font_path1 = "DUNGEONFONT.ttf"
 font1 = pygame.font.Font(font_path1, 35)
 
@@ -215,19 +222,20 @@ pygame.mixer.music.play(-1) # The value -1 keeps it so it loops the bg music for
 # Our classes
 
 # Projectile class
-class Projectile(pygame.sprite.Sprite):
+class Projectile(pygame.sprite.Sprite): # Attributing things to our sprite class
     def __init__(self, x, y, width, height):
-        super().__init__()
+        super().__init__() # Calls the constructor of the parent class Sprite to ensure that the Projectile
+        #class is properly initialized and can leverage the functionalities provided by the Sprite class.
         # Load projectile image
         original_image = pygame.image.load("Slash.png") 
         self.image =  pygame.transform.scale(original_image, (width, height))
         self.rect = self.image.get_rect()
-        self.rect.x = x - 20
-        self.rect.y = y + -20
+        self.rect.x = x - 20 # initial coords
+        self.rect.y = y + -20 # initial coord
         self.speed = 10  # Set the projectile speed
 
-    def update(self):
-        self.rect.x += self.speed
+    def update(self): # defining the update method
+        self.rect.x += self.speed #Updates the position 
 
 # FrogEnemy class
 class FrogEnemy(pygame.sprite.Sprite):
@@ -242,14 +250,12 @@ class FrogEnemy(pygame.sprite.Sprite):
         ]
         print("Frog enemy initialized at:", x, y)
 
-        self.index = 0
-        self.image = self.running_images[self.index]
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.speed = 1  # Set the frog enemy speed
-        self.jump_power = -15  # Jump power for frogs
-        self.on_ground = False  # Flag to check if frog is on the ground
+        self.index = 0 # starting frame of animation
+        self.image = self.running_images[self.index] # set to the first frame of the running animation (self.running_images[0]).
+        self.rect = self.image.get_rect() # Defining the rectangular space around the frog
+        self.rect.x = x + 1000 # 1000 pixels off screen
+        self.rect.y = y # x and y are at edge of the right edge
+        self.speed = 5  # Set the frog enemy speed
 
     def update(self, target_x, target_y):
         print("Updating frog enemy position")
@@ -268,10 +274,6 @@ class FrogEnemy(pygame.sprite.Sprite):
         if self.index >= len(self.running_images):
             self.index = 0
         self.image = self.running_images[self.index]
-        
-        # Frog jump logic
-        if self.on_ground and random.randint(0, 100) < 2:  # 2% chance to jump
-            self.jump()
 
     def jump(self):
         self.rect.y += self.jump_power
@@ -668,6 +670,7 @@ while True:
         if gameState == "Axe Warrior Capturing":
             if mousePressed:
                 mainwindow.blit(sprite1, sprite1rect.topleft)
+                floor = 205
 
                 # Update sprite1 position
                 sprite1rect.y += gravitysprite1
@@ -684,6 +687,7 @@ while True:
         elif gameState == "Brave Knight Capturing":
             if mousePressed:
                 mainwindow.blit(sprite2, sprite2rect.topleft)
+                floor = 205
 
                 # Update sprite2 position
                 sprite2rect.y += gravitysprite2
@@ -700,6 +704,7 @@ while True:
         elif gameState == "Dark Knight Capturing":
             if mousePressed:
                 mainwindow.blit(sprite3, sprite3rect.topleft)
+                floor = 205
 
                 # Update sprite3 position
                 sprite3rect.y += gravitysprite3
