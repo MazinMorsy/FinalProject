@@ -34,7 +34,7 @@ music_button_pressed = False
 # Sprite speed
 sprite_speed = 3
 
-
+# Starting gameState
 gameState = "IntroScreen"
 
 SpacePressed = False  # Initialize SpacePressed variable
@@ -256,7 +256,7 @@ class FrogEnemy(pygame.sprite.Sprite):
         self.rect.y = y # x and y are at edge of the right edge
         self.speed = 5  # Set the frog enemy speed
 
-    def update(self, target_x, target_y): # Initializing class method update and giving it attributes
+    def update(self, target_x, target_y): # Initializing class method (function) update and giving it attributes
         # Updating the frogs x position based on the our character
         # Move to the right
         if self.rect.x < target_x:
