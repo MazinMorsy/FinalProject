@@ -185,6 +185,10 @@ Knight3SlashAnimation2 = pygame.image.load("Knight3SlashAnimation2.png")
 Knight3SlashAnimation3 = pygame.image.load("Knight3SlashAnimation3.png")
 
 
+# Set up hearts and heart images
+hearts = 3
+heart_images = [Heart1, Heart2, Heart3]
+
 font_path1 = "DUNGEONFONT.ttf"
 font1 = pygame.font.Font(font_path1, 35)
 
@@ -224,7 +228,7 @@ class Projectile(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speed
-        
+
 # FrogEnemy class
 class FrogEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -236,6 +240,7 @@ class FrogEnemy(pygame.sprite.Sprite):
             pygame.image.load("FrogEnemyRun3.png"),
             # Add more frames as needed
         ]
+        print("Frog enemy initialized at:", x, y)
 
         self.index = 0
         self.image = self.running_images[self.index]
@@ -243,8 +248,11 @@ class FrogEnemy(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.speed = 2  # Set the frog enemy speed
+        self.jump_power = -15  # Jump power for frogs
+        self.on_ground = False  # Flag to check if frog is on the ground
 
     def update(self, target_x, target_y):
+        print("Updating frog enemy position")
         if self.rect.x < target_x:
             self.rect.x += self.speed
         elif self.rect.x > target_x:
@@ -260,18 +268,31 @@ class FrogEnemy(pygame.sprite.Sprite):
         if self.index >= len(self.running_images):
             self.index = 0
         self.image = self.running_images[self.index]
+        
+        # Frog jump logic
+        if self.on_ground and random.randint(0, 100) < 2:  # 2% chance to jump
+            self.jump()
+
+    def jump(self):
+        self.rect.y += self.jump_power
 
 # FrogEnemy group
 frog_enemy_group = pygame.sprite.Group()
+
+# Set initial coordinates for frogs
+frog1 = FrogEnemy(100, 100)
+frog2 = FrogEnemy(200, 200)
+frog_enemy_group.add(frog1, frog2)
 
 
 # Set up a timer for frog enemy spawning
 spawn_timer = 0
 spawn_interval = random.randint(500, 700)  # Initial spawn interval
+spawn_delay = 3000  # The initial delay before frogs start spawning
 max_frog_enemies = 15  # Adjust this value based on how many frog enemies you want
 
         
-# Shaking window function        
+# Shaking window function
 def shake_mainwindow(surface, duration, magnitude):
     start_time = pygame.time.get_ticks()
     original_position = surface.get_rect().topleft
@@ -520,7 +541,9 @@ while True:
         mainwindow.blit(Heart1, (400,0))
         mainwindow.blit(Heart2, (425,0))
         mainwindow.blit(Heart3, (450,0))
-        
+        frog_enemy_group.draw(mainwindow)
+        mainwindow.blit(frog1, (200,200))
+
         if gameState == "Axe Warrior Playing":
             if mousePressed == True:
                 mainwindow.blit(sprite1, sprite1rect.topleft)  # Use topleft attribute for blit
@@ -543,6 +566,8 @@ while True:
             if mousePressed == True:
                 mainwindow.blit(sprite2, sprite2rect.topleft)  # Use topleft attribute for blit
                 frog_enemy_group.update(sprite2rect.x, sprite2rect.y)
+                frog_enemy_group.draw(mainwindow)
+
 
                 # Stops our sprite from falling when it hits the coordinates that we chose for the floor
                 if gameState == "Brave Knight Playing":
@@ -565,25 +590,48 @@ while True:
         
         # Update and draw projectiles in the following gamestates
         projectile_group.update()
-        projectile_group.draw(mainwindow)  # Draw s on the game window
-        # Create frog enemy at the right edge of the screen
-        if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
-            new_frog_enemy = FrogEnemy(windowWidth, floor)
-            frog_enemy_group.add(new_frog_enemy)
-                
-        frog_enemy_group.draw(mainwindow)
+        projectile_group.draw(mainwindow)  # Draws on the game window
         
-        if spawn_timer >= spawn_interval and len(frog_enemy_group) < max_frog_enemies:
-            spawn_timer = 0
-            spawn_interval = random.randint(2000, 5000)  # Reset spawn interval
+        # Create frog enemy at the right edge of the screen after spawn delay
+        if spawn_timer >= spawn_delay and len(frog_enemy_group) < max_frog_enemies:
+            if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
+                new_frog_enemy = FrogEnemy(windowWidth, floor)
+                frog_enemy_group.add(new_frog_enemy)
+        # Drawing frog enemies
+        frog_enemy_group.draw(mainwindow)
+        print("Drawing frog enemies")
+
+                
+        # Update frog positions
+        for frog in frog_enemy_group:
+            target_x, target_y = sprite2rect.x, sprite2rect.y
+            print("Target Coordinates:", target_x, target_y)
+            frog.update(target_x, target_y)  # Pass player character's position to frog update method
+
+            # Check for collisions with player character
+            if frog.rect.colliderect(sprite2rect):  # Assuming sprite2 is the player character
+                print("Sprite Hit!")
+                hearts -= 1
+                if hearts <= 0:
+                    gameState = "Game Over You Lost"
+                else:
+                    # Remove one heart image
+                    heart_images.pop()
+                    if len(heart_images) == 0:
+                        gameState = "Game Over You Lost"
+
+                    # Additional game over logic can be added here
+
+        # Check for game over condition
+        if hearts <= 0:
+            gameState = "Game Over You Lost"        
+            if spawn_timer >= spawn_interval and len(frog_enemy_group) < max_frog_enemies:
+                spawn_timer = 0
+                spawn_interval = random.randint(2000, 5000)  # Reset spawn interval
             
             # Update and draw projectiles and frog enemies
             projectile_group.update()
             projectile_group.draw(mainwindow)
-
-        # Spawn a new frog enemy at a random position
-        new_frog_enemy = FrogEnemy(random.randint(0, windowWidth), random.randint(0, windowHeight))
-        frog_enemy_group.add(new_frog_enemy)
         
         # Update the timer
         current_time += clock.get_rawtime() / 1000
@@ -971,7 +1019,7 @@ while True:
                 frame = 0
         if frame > 30:
             frame = 0
-        
+
     # *********DRAW THE FRAME**********
     pygame.display.flip()
     clock.tick(FPS)  # Force frame rate to 60fps or lower
