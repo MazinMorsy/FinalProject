@@ -247,7 +247,7 @@ class FrogEnemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 2  # Set the frog enemy speed
+        self.speed = 1  # Set the frog enemy speed
         self.jump_power = -15  # Jump power for frogs
         self.on_ground = False  # Flag to check if frog is on the ground
 
@@ -278,11 +278,6 @@ class FrogEnemy(pygame.sprite.Sprite):
 
 # FrogEnemy group
 frog_enemy_group = pygame.sprite.Group()
-
-# Set initial coordinates for frogs
-frog1 = FrogEnemy(100, 100)
-frog2 = FrogEnemy(200, 200)
-frog_enemy_group.add(frog1, frog2)
 
 
 # Set up a timer for frog enemy spawning
@@ -592,10 +587,10 @@ while True:
         projectile_group.draw(mainwindow)  # Draws on the game window
         
         # Create frog enemy at the right edge of the screen after spawn delay
-        if spawn_timer >= spawn_delay and len(frog_enemy_group) < max_frog_enemies:
-            if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
-                new_frog_enemy = FrogEnemy(windowWidth, floor)
-                frog_enemy_group.add(new_frog_enemy)
+        if frame % 120 == 0:  # Add a new frog enemy every 120 frames (adjust as needed)
+            new_frog_enemy = FrogEnemy(windowWidth, floor)
+            frog_enemy_group.add(new_frog_enemy)
+                
         # Drawing frog enemies
         frog_enemy_group.draw(mainwindow)
         print("Drawing frog enemies")
@@ -603,24 +598,51 @@ while True:
                 
         # Update frog positions
         for frog in frog_enemy_group:
-            target_x, target_y = sprite2rect.x, sprite2rect.y
-            print("Target Coordinates:", target_x, target_y)
-            frog.update(target_x, target_y)  # Pass player character's position to frog update method
-
-            # Check for collisions with player character
-            if frog.rect.colliderect(sprite2rect):  # Assuming sprite2 is the player character
-                print("Sprite Hit!")
-                hearts -= 1
-                if hearts <= 0:
-                    gameState = "Game Over You Lost"
-                else:
-                    # Remove one heart image
-                    heart_images.pop()
-                    if len(heart_images) == 0:
+            if gameState == "Axe Warrior Playing":
+                target_x, target_y = sprite1rect.x, sprite1rect.y
+                frog.update(target_x, target_y)  # Pass player character's position to frog update method
+                # Check for collisions with player character
+                if frog.rect.colliderect(sprite1rect):  # Assuming sprite2 is the player character
+                    print("Sprite Hit!")
+                    hearts -= 1
+                    if hearts <= 0:
                         gameState = "Game Over You Lost"
+                    else:
+                        # Remove one heart image
+                        heart_images.pop()
+                        if len(heart_images) == 0:
+                            gameState = "Game Over You Lost"
 
-                    # Additional game over logic can be added here
-
+            if gameState == "Brave Knight Playing":
+                target_x, target_y = sprite2rect.x, sprite2rect.y
+                frog.update(target_x, target_y)  # Pass player character's position to frog update method
+                # Check for collisions with player character
+                if frog.rect.colliderect(sprite2rect):  # Assuming sprite2 is the player character
+                    print("Sprite Hit!")
+                    hearts -= 1
+                    if hearts <= 0:
+                        gameState = "Game Over You Lost"
+                    else:
+                        # Remove one heart image
+                        heart_images.pop()
+                        if len(heart_images) == 0:
+                            gameState = "Game Over You Lost"
+                            
+            if gameState == "Dark Knight Playing":
+                target_x, target_y = sprite3rect.x, sprite3rect.y
+                frog.update(target_x, target_y)  # Pass player character's position to frog update method
+                # Check for collisions with player character
+                if frog.rect.colliderect(sprite3rect):  # Assuming sprite2 is the player character
+                    print("Sprite Hit!")
+                    hearts -= 1
+                    if hearts <= 0:
+                        gameState = "Game Over You Lost"
+                    else:
+                        # Remove one heart image
+                        heart_images.pop()
+                        if len(heart_images) == 0:
+                            gameState = "Game Over You Lost"
+                            
         # Check for game over condition
         if hearts <= 0:
             gameState = "Game Over You Lost"        
@@ -738,8 +760,18 @@ while True:
         word5 = "You Won"
         renderedText = font3.render(word5, 1, pygame.Color("Black"))
         Introwindow.blit(renderedText, (130,30))
+    
+    elif gameState == "Game Over You Lost" or gameState == "You Won":
+        # Reset hearts
+        hearts = 3
 
+        # Reset heart images
+        heart_images = [HeartImage, HeartImage, HeartImage]
 
+        # Reset timer
+        current_time = 0
+        
+        
     # *********GAME LOGIC**********
     # Setting our keybinds to see if a specific key is pressed to subtract or add to the Sprites x and y coordinates
     # to move by sprite speed variable that we created
